@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Upload(models.Model):
     class UploadStatus(models.TextChoices):
-        Pending = "pending", "Pending"
+        PENDING = "pending", "Pending"
         COMPLETED = "completed", "Completed"
         FAILED = "failed", "Failed"
     
