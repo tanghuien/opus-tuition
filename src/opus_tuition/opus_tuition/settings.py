@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'assignments.apps.AssignmentsConfig',
     'invoices.apps.InvoicesConfig',
-    'lesson_logs.apps.LessonLogsConfig'
+    'lesson_logs.apps.LessonLogsConfig',
+    'uploads.apps.UploadsConfig'
 ]
 
 MIDDLEWARE = [
