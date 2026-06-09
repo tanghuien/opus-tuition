@@ -7822,6 +7822,9 @@ a.anchor-link {
 Requirement already satisfied: numpy&gt;=2.3.3 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from pandas) (2.4.6)
 Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from pandas) (2.9.0.post0)
 Requirement already satisfied: six&gt;=1.5 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.17.0)
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">26.1.1</span> -&gt; <span class="ansi-green-fg">26.1.2</span>
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
 Requirement already satisfied: nbconvert in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (7.17.1)
 Requirement already satisfied: beautifulsoup4 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (4.14.3)
 Requirement already satisfied: bleach!=5.0.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from bleach[css]!=5.0.0-&gt;nbconvert) (6.3.0)
@@ -7853,6 +7856,9 @@ Requirement already satisfied: rpds-py&gt;=0.25.0 in /Users/huien/Documents/opus
 Requirement already satisfied: six&gt;=1.5 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from python-dateutil&gt;=2.8.2-&gt;jupyter-client&gt;=6.1.12-&gt;nbclient&gt;=0.5.0-&gt;nbconvert) (1.17.0)
 Requirement already satisfied: soupsieve&gt;=1.6.1 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from beautifulsoup4-&gt;nbconvert) (2.8.4)
 Requirement already satisfied: typing-extensions&gt;=4.0.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from beautifulsoup4-&gt;nbconvert) (4.15.0)
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">26.1.1</span> -&gt; <span class="ansi-green-fg">26.1.2</span>
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
 Note: you may need to restart the kernel to use updated packages.
 </pre>
 </div>
@@ -7928,7 +7934,7 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Read the dataset</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">lesson_logs_path</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">lesson_logs_path</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
 <span class="c1"># Get first five row of the dataset</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -7962,18 +7968,28 @@ Note: you may need to restart the kernel to use updated packages.
 <thead>
 <tr style="text-align: right;">
 <th></th>
-<th>LOG-001</th>
-<th>TAS-001</th>
-<th>05/01/25</th>
-<th>1.5</th>
-<th>Present</th>
-<th>Covered algebra ch.3</th>
-<th>82.5</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th>0</th>
+<td>LOG-001</td>
+<td>TAS-001</td>
+<td>05/01/25</td>
+<td>1.5</td>
+<td>Present</td>
+<td>Covered algebra ch.3</td>
+<td>82.5</td>
+</tr>
+<tr>
+<th>1</th>
 <td>LOG-002</td>
 <td>TAS-002</td>
 <td>12/03/25</td>
@@ -7983,7 +7999,7 @@ Note: you may need to restart the kernel to use updated packages.
 <td>45</td>
 </tr>
 <tr>
-<th>1</th>
+<th>2</th>
 <td>LOG-003</td>
 <td>TAS-003</td>
 <td>14/02/25</td>
@@ -7993,7 +8009,7 @@ Note: you may need to restart the kernel to use updated packages.
 <td>120</td>
 </tr>
 <tr>
-<th>2</th>
+<th>3</th>
 <td>LOG-004</td>
 <td>TAS-004</td>
 <td>20/03/25</td>
@@ -8003,7 +8019,7 @@ Note: you may need to restart the kernel to use updated packages.
 <td>TBC</td>
 </tr>
 <tr>
-<th>3</th>
+<th>4</th>
 <td>LOG-005</td>
 <td>TAS-001</td>
 <td>08/01/25</td>
@@ -8011,16 +8027,6 @@ Note: you may need to restart the kernel to use updated packages.
 <td>Present</td>
 <td>Quadratic equations</td>
 <td>82.5</td>
-</tr>
-<tr>
-<th>4</th>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
 </tr>
 </tbody>
 </table>
@@ -8062,7 +8068,7 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>(17, 7)</pre>
+<pre>(18, 7)</pre>
 </div>
 </div>
 </div>
@@ -8090,7 +8096,7 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>['LOG-001', 'TAS-001', '05/01/25', 1.5, 'Present', 'Covered algebra ch.3', 82.5]
+<pre>[0, 1, 2, 3, 4, 5, 6]
 </pre>
 </div>
 </div>
@@ -8134,17 +8140,17 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>&lt;class 'pandas.DataFrame'&gt;
-RangeIndex: 17 entries, 0 to 16
+RangeIndex: 18 entries, 0 to 17
 Data columns (total 7 columns):
  #   Column             Non-Null Count  Dtype  
 ---  ------             --------------  -----  
- 0   Log ID             15 non-null     str    
- 1   Assignment ID      15 non-null     str    
- 2   Session Date       15 non-null     str    
- 3   Duration (Hours)   14 non-null     float64
- 4   Attendance Status  15 non-null     str    
- 5   Session Notes      15 non-null     str    
- 6   Fees Charged       15 non-null     object 
+ 0   Log ID             16 non-null     str    
+ 1   Assignment ID      16 non-null     str    
+ 2   Session Date       16 non-null     str    
+ 3   Duration (Hours)   15 non-null     float64
+ 4   Attendance Status  16 non-null     str    
+ 5   Session Notes      16 non-null     str    
+ 6   Fees Charged       16 non-null     object 
 dtypes: float64(1), object(1), str(5)
 memory usage: 1.1+ KB
 </pre>
@@ -8175,13 +8181,13 @@ memory usage: 1.1+ KB
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>  Log ID Assignment ID Session Date  Duration (Hours) Attendance Status  \
-4    NaN           NaN          NaN               NaN               NaN   
-9    NaN           NaN          NaN               NaN               NaN   
+<pre>   Log ID Assignment ID Session Date  Duration (Hours) Attendance Status  \
+5     NaN           NaN          NaN               NaN               NaN   
+10    NaN           NaN          NaN               NaN               NaN   
 
-  Session Notes Fees Charged  
-4           NaN          NaN  
-9           NaN          NaN  
+   Session Notes Fees Charged  
+5            NaN          NaN  
+10           NaN          NaN  
 </pre>
 </div>
 </div>
@@ -8235,8 +8241,8 @@ memory usage: 1.1+ KB
 <div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Remove duplicates, leaving only first occurence</span>
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">"first"</span><span class="p">)</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Remove duplicates, leaving only last occurrence</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"Attendance Status"</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">"last"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8251,18 +8257,254 @@ memory usage: 1.1+ KB
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Drop blank rows with all values are nulls</span>
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a0ecb8be8abedd3">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5a8a79ef93a7da24">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Convert selected columns to the modern string dtype</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
+    <span class="s2">"Log ID"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
+    <span class="s2">"Assignment ID"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
+    <span class="s2">"Attendance Status"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
+    <span class="s2">"Session Notes"</span><span class="p">:</span> <span class="s2">"string"</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=214a26a221147ecf">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="n">df_cleaned</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Log ID</th>
+<th>Assignment ID</th>
+<th>Session Date</th>
+<th>Duration (Hours)</th>
+<th>Attendance Status</th>
+<th>Session Notes</th>
+<th>Fees Charged</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>LOG-001</td>
+<td>TAS-001</td>
+<td>05/01/25</td>
+<td>1.5</td>
+<td>Present</td>
+<td>Covered algebra ch.3</td>
+<td>82.5</td>
+</tr>
+<tr>
+<th>1</th>
+<td>LOG-002</td>
+<td>TAS-002</td>
+<td>12/03/25</td>
+<td>1.0</td>
+<td>Present</td>
+<td>Reading comprehension</td>
+<td>45</td>
+</tr>
+<tr>
+<th>2</th>
+<td>LOG-003</td>
+<td>TAS-003</td>
+<td>14/02/25</td>
+<td>2.0</td>
+<td>Present</td>
+<td>Timed practice paper</td>
+<td>120</td>
+</tr>
+<tr>
+<th>3</th>
+<td>LOG-004</td>
+<td>TAS-004</td>
+<td>20/03/25</td>
+<td>1.5</td>
+<td>Absent</td>
+<td>Student unwell — cancelled</td>
+<td>TBC</td>
+</tr>
+<tr>
+<th>4</th>
+<td>LOG-005</td>
+<td>TAS-001</td>
+<td>08/01/25</td>
+<td>1.5</td>
+<td>Present</td>
+<td>Quadratic equations</td>
+<td>82.5</td>
+</tr>
+<tr>
+<th>6</th>
+<td>LOG-006</td>
+<td>TAS-006</td>
+<td>26/04/25</td>
+<td>1.0</td>
+<td>Present</td>
+<td>Organic chemistry intro</td>
+<td>70</td>
+</tr>
+<tr>
+<th>7</th>
+<td>LOG-007</td>
+<td>TAS-007</td>
+<td>03/06/25</td>
+<td>1.5</td>
+<td>Present</td>
+<td>Newton's laws</td>
+<td>75</td>
+</tr>
+<tr>
+<th>8</th>
+<td>LOG-008</td>
+<td>TAS-008</td>
+<td>09/07/25</td>
+<td>1.0</td>
+<td>Present</td>
+<td>Linear equations</td>
+<td>45</td>
+</tr>
+<tr>
+<th>9</th>
+<td>LOG-009</td>
+<td>TAS-003</td>
+<td>21/02/25</td>
+<td>2.0</td>
+<td>Present</td>
+<td>Model essay writing</td>
+<td>120</td>
+</tr>
+<tr>
+<th>11</th>
+<td>LOG-010</td>
+<td>TAS-010</td>
+<td>22/08/25</td>
+<td>1.5</td>
+<td>Present</td>
+<td>Cell biology revision</td>
+<td>82.5</td>
+</tr>
+<tr>
+<th>12</th>
+<td>LOG-011</td>
+<td>TAS-001</td>
+<td>15/01/25</td>
+<td>1.5</td>
+<td>Late</td>
+<td>Student arrived 20 mins late</td>
+<td>82.5</td>
+</tr>
+<tr>
+<th>13</th>
+<td>LOG-012</td>
+<td>TAS-011</td>
+<td>05/09/25</td>
+<td>NaN</td>
+<td>Present</td>
+<td>First session — assessment</td>
+<td>60</td>
+</tr>
+<tr>
+<th>14</th>
+<td>LOG-013</td>
+<td>TAS-002</td>
+<td>19/03/25</td>
+<td>1.0</td>
+<td>Present</td>
+<td>Grammar exercises</td>
+<td>45</td>
+</tr>
+<tr>
+<th>15</th>
+<td>LOG-014</td>
+<td>TAS-012</td>
+<td>17/10/25</td>
+<td>1.5</td>
+<td>Present</td>
+<td>Forces and motion</td>
+<td>67.5</td>
+</tr>
+<tr>
+<th>16</th>
+<td>LOG-015</td>
+<td>TAS-006</td>
+<td>03/05/25</td>
+<td>1.0</td>
+<td>Absent-MC</td>
+<td>Medical cert submitted</td>
+<td>0</td>
+</tr>
+<tr>
+<th>17</th>
+<td>LOG-016</td>
+<td>TAS-009</td>
+<td>22/03/25</td>
+<td>1.0</td>
+<td>Present</td>
+<td>Comprehension strategies</td>
+<td>45</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6e4700409a8b0f92">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Fill null attendance status values with "Absent"</span>
@@ -8272,12 +8514,12 @@ memory usage: 1.1+ KB
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a4f495dec9002566">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f7aacae8f9677022">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_to_date</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -8333,30 +8575,30 @@ memory usage: 1.1+ KB
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5d2444e8309d0ead">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=20de50e8b83a529e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Replace null values to 1.0 by default</span>
-<span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6c0a7e5ad5920ece">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=fd1ac512087b0d82">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Extract numbers, periods, and commas. Remove commas.</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Extract numbers, periods, and commas. Handle missing values safely.</span>
 <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span>
     <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
@@ -8364,12 +8606,16 @@ memory usage: 1.1+ KB
     <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="p">)</span>
 
-<span class="c1"># Convert to Decimal and strictly round to 1 decimal places</span>
+<span class="c1"># Convert to Decimal and strictly round to 2 decimal places</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_rounded_decimal</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">"nan"</span><span class="p">:</span>
+    <span class="c1"># Catch null and empty strings</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"nan"</span><span class="p">,</span> <span class="s2">""</span><span class="p">]:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="c1"># Quantum ensures exactly one decimal places (.1)</span>
-    <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">"0.1"</span><span class="p">),</span> <span class="n">rounding</span><span class="o">=</span><span class="n">ROUND_HALF_UP</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Quantize ensures exactly two decimal places (.1)</span>
+        <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">"0.1"</span><span class="p">),</span> <span class="n">rounding</span><span class="o">=</span><span class="n">ROUND_HALF_UP</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
 <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_rounded_decimal</span><span class="p">)</span>
 </pre></div>
@@ -8377,12 +8623,12 @@ memory usage: 1.1+ KB
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b7486e67e224a4ac">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a52189e56255dcb2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Replaces rows containing only letters with 0</span>
@@ -8392,12 +8638,12 @@ memory usage: 1.1+ KB
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9e70d0a80662830">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ba294afe40897e48">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Extract numbers, periods, and commas. Remove commas.</span>
@@ -8421,26 +8667,6 @@ memory usage: 1.1+ KB
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5a8a79ef93a7da24">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Convert selected columns to the modern string dtype</span>
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
-    <span class="s2">"Log ID"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
-    <span class="s2">"Assignment ID"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
-    <span class="s2">"Attendance Status"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
-    <span class="s2">"Session Notes"</span><span class="p">:</span> <span class="s2">"string"</span>
-<span class="p">})</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=382b4b6e6f86526d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -8457,7 +8683,7 @@ memory usage: 1.1+ KB
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># View summary of dataframe</span>
@@ -8475,19 +8701,19 @@ memory usage: 1.1+ KB
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>&lt;class 'pandas.DataFrame'&gt;
-Index: 15 entries, 0 to 16
+Index: 16 entries, 0 to 17
 Data columns (total 7 columns):
  #   Column             Non-Null Count  Dtype         
 ---  ------             --------------  -----         
- 0   Log ID             15 non-null     string        
- 1   Assignment ID      15 non-null     string        
- 2   Session Date       15 non-null     datetime64[us]
- 3   Duration (Hours)   15 non-null     object        
- 4   Attendance Status  15 non-null     string        
- 5   Session Notes      15 non-null     string        
- 6   Fees Charged       15 non-null     object        
+ 0   Log ID             16 non-null     string        
+ 1   Assignment ID      16 non-null     string        
+ 2   Session Date       16 non-null     datetime64[us]
+ 3   Duration (Hours)   16 non-null     object        
+ 4   Attendance Status  16 non-null     string        
+ 5   Session Notes      16 non-null     string        
+ 6   Fees Charged       16 non-null     object        
 dtypes: datetime64[us](1), object(2), string(4)
-memory usage: 960.0+ bytes
+memory usage: 1.0+ KB
 </pre>
 </div>
 </div>
@@ -8498,7 +8724,7 @@ memory usage: 960.0+ bytes
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Print the final cleaned results</span>
@@ -8513,7 +8739,7 @@ memory usage: 960.0+ bytes
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[21]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[22]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8545,6 +8771,16 @@ memory usage: 960.0+ bytes
 <tbody>
 <tr>
 <th>0</th>
+<td>LOG-001</td>
+<td>TAS-001</td>
+<td>2025-01-05</td>
+<td>1.5</td>
+<td>Present</td>
+<td>Covered algebra ch.3</td>
+<td>82.50</td>
+</tr>
+<tr>
+<th>1</th>
 <td>LOG-002</td>
 <td>TAS-002</td>
 <td>2025-03-12</td>
@@ -8554,7 +8790,7 @@ memory usage: 960.0+ bytes
 <td>45.00</td>
 </tr>
 <tr>
-<th>1</th>
+<th>2</th>
 <td>LOG-003</td>
 <td>TAS-003</td>
 <td>2025-02-14</td>
@@ -8564,7 +8800,7 @@ memory usage: 960.0+ bytes
 <td>120.00</td>
 </tr>
 <tr>
-<th>2</th>
+<th>3</th>
 <td>LOG-004</td>
 <td>TAS-004</td>
 <td>2025-03-20</td>
@@ -8574,7 +8810,7 @@ memory usage: 960.0+ bytes
 <td>0.00</td>
 </tr>
 <tr>
-<th>3</th>
+<th>4</th>
 <td>LOG-005</td>
 <td>TAS-001</td>
 <td>2025-01-08</td>
@@ -8584,7 +8820,7 @@ memory usage: 960.0+ bytes
 <td>82.50</td>
 </tr>
 <tr>
-<th>5</th>
+<th>6</th>
 <td>LOG-006</td>
 <td>TAS-006</td>
 <td>2025-04-26</td>
@@ -8594,7 +8830,7 @@ memory usage: 960.0+ bytes
 <td>70.00</td>
 </tr>
 <tr>
-<th>6</th>
+<th>7</th>
 <td>LOG-007</td>
 <td>TAS-007</td>
 <td>2025-06-03</td>
@@ -8604,7 +8840,7 @@ memory usage: 960.0+ bytes
 <td>75.00</td>
 </tr>
 <tr>
-<th>7</th>
+<th>8</th>
 <td>LOG-008</td>
 <td>TAS-008</td>
 <td>2025-07-09</td>
@@ -8614,7 +8850,7 @@ memory usage: 960.0+ bytes
 <td>45.00</td>
 </tr>
 <tr>
-<th>8</th>
+<th>9</th>
 <td>LOG-009</td>
 <td>TAS-003</td>
 <td>2025-02-21</td>
@@ -8624,7 +8860,7 @@ memory usage: 960.0+ bytes
 <td>120.00</td>
 </tr>
 <tr>
-<th>10</th>
+<th>11</th>
 <td>LOG-010</td>
 <td>TAS-010</td>
 <td>2025-08-22</td>
@@ -8634,7 +8870,7 @@ memory usage: 960.0+ bytes
 <td>82.50</td>
 </tr>
 <tr>
-<th>11</th>
+<th>12</th>
 <td>LOG-011</td>
 <td>TAS-001</td>
 <td>2025-01-15</td>
@@ -8644,7 +8880,7 @@ memory usage: 960.0+ bytes
 <td>82.50</td>
 </tr>
 <tr>
-<th>12</th>
+<th>13</th>
 <td>LOG-012</td>
 <td>TAS-011</td>
 <td>2025-09-05</td>
@@ -8654,7 +8890,7 @@ memory usage: 960.0+ bytes
 <td>60.00</td>
 </tr>
 <tr>
-<th>13</th>
+<th>14</th>
 <td>LOG-013</td>
 <td>TAS-002</td>
 <td>2025-03-19</td>
@@ -8664,7 +8900,7 @@ memory usage: 960.0+ bytes
 <td>45.00</td>
 </tr>
 <tr>
-<th>14</th>
+<th>15</th>
 <td>LOG-014</td>
 <td>TAS-012</td>
 <td>2025-10-17</td>
@@ -8674,7 +8910,7 @@ memory usage: 960.0+ bytes
 <td>67.50</td>
 </tr>
 <tr>
-<th>15</th>
+<th>16</th>
 <td>LOG-015</td>
 <td>TAS-006</td>
 <td>2025-05-03</td>
@@ -8684,7 +8920,7 @@ memory usage: 960.0+ bytes
 <td>0.00</td>
 </tr>
 <tr>
-<th>16</th>
+<th>17</th>
 <td>LOG-016</td>
 <td>TAS-009</td>
 <td>2025-03-22</td>

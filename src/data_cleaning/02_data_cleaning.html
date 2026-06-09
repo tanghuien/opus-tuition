@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>01_eda_tutor_assignments</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>02_data_cleaning</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7795,7 +7795,7 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f49fedd0c53016bd">
+<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7d12dd081cd97a5d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7803,9 +7803,48 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Install libraries</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># Get the current directory of the notebook</span>
+<span class="n">notebook_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+
+<span class="c1"># Build the path to the data</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">notebook_dir</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">,</span> <span class="s2">"raw"</span><span class="p">,</span> <span class="s2">"tutor_assignments_raw.xlsx"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Notebook is here:"</span><span class="p">,</span> <span class="n">notebook_dir</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Data is at:"</span><span class="p">,</span> <span class="n">data_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Notebook is here: /Users/huien/Documents/opus-tuition/src/data_cleaning
+Data is at: /Users/huien/Documents/opus-tuition/src/data_cleaning/data/raw/tutor_assignments_raw.xlsx
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e5031d0ad438255a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Install necessary packages</span>
 <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>pandas
-<span class="o">%</span><span class="k">pip</span> install nbconvert
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>openpyxl
+<span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>xlsxwriter
 </pre></div>
 </div>
 </div>
@@ -7822,61 +7861,24 @@ a.anchor-link {
 Requirement already satisfied: numpy&gt;=2.3.3 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from pandas) (2.4.6)
 Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from pandas) (2.9.0.post0)
 Requirement already satisfied: six&gt;=1.5 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.17.0)
-Requirement already satisfied: nbconvert in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (7.17.1)
-Requirement already satisfied: beautifulsoup4 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (4.14.3)
-Requirement already satisfied: bleach!=5.0.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from bleach[css]!=5.0.0-&gt;nbconvert) (6.3.0)
-Requirement already satisfied: defusedxml in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (0.7.1)
-Requirement already satisfied: jinja2&gt;=3.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (3.1.6)
-Requirement already satisfied: jupyter-core&gt;=4.7 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (5.9.1)
-Requirement already satisfied: jupyterlab-pygments in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (0.3.0)
-Requirement already satisfied: markupsafe&gt;=2.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (3.0.3)
-Requirement already satisfied: mistune&lt;4,&gt;=2.0.3 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (3.2.1)
-Requirement already satisfied: nbclient&gt;=0.5.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (0.10.4)
-Requirement already satisfied: nbformat&gt;=5.7 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (5.10.4)
-Requirement already satisfied: packaging in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (26.2)
-Requirement already satisfied: pandocfilters&gt;=1.4.1 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (1.5.1)
-Requirement already satisfied: pygments&gt;=2.4.1 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (2.20.0)
-Requirement already satisfied: traitlets&gt;=5.1 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbconvert) (5.15.0)
-Requirement already satisfied: webencodings in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from bleach!=5.0.0-&gt;bleach[css]!=5.0.0-&gt;nbconvert) (0.5.1)
-Requirement already satisfied: tinycss2&lt;1.5,&gt;=1.1.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from bleach[css]!=5.0.0-&gt;nbconvert) (1.4.0)
-Requirement already satisfied: platformdirs&gt;=2.5 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jupyter-core&gt;=4.7-&gt;nbconvert) (4.10.0)
-Requirement already satisfied: jupyter-client&gt;=6.1.12 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbclient&gt;=0.5.0-&gt;nbconvert) (8.8.0)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jupyter-client&gt;=6.1.12-&gt;nbclient&gt;=0.5.0-&gt;nbconvert) (2.9.0.post0)
-Requirement already satisfied: pyzmq&gt;=25.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jupyter-client&gt;=6.1.12-&gt;nbclient&gt;=0.5.0-&gt;nbconvert) (27.1.0)
-Requirement already satisfied: tornado&gt;=6.4.1 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jupyter-client&gt;=6.1.12-&gt;nbclient&gt;=0.5.0-&gt;nbconvert) (6.5.6)
-Requirement already satisfied: fastjsonschema&gt;=2.15 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbformat&gt;=5.7-&gt;nbconvert) (2.21.2)
-Requirement already satisfied: jsonschema&gt;=2.6 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from nbformat&gt;=5.7-&gt;nbconvert) (4.26.0)
-Requirement already satisfied: attrs&gt;=22.2.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jsonschema&gt;=2.6-&gt;nbformat&gt;=5.7-&gt;nbconvert) (26.1.0)
-Requirement already satisfied: jsonschema-specifications&gt;=2023.03.6 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jsonschema&gt;=2.6-&gt;nbformat&gt;=5.7-&gt;nbconvert) (2025.9.1)
-Requirement already satisfied: referencing&gt;=0.28.4 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jsonschema&gt;=2.6-&gt;nbformat&gt;=5.7-&gt;nbconvert) (0.37.0)
-Requirement already satisfied: rpds-py&gt;=0.25.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from jsonschema&gt;=2.6-&gt;nbformat&gt;=5.7-&gt;nbconvert) (2026.5.1)
-Requirement already satisfied: six&gt;=1.5 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from python-dateutil&gt;=2.8.2-&gt;jupyter-client&gt;=6.1.12-&gt;nbclient&gt;=0.5.0-&gt;nbconvert) (1.17.0)
-Requirement already satisfied: soupsieve&gt;=1.6.1 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from beautifulsoup4-&gt;nbconvert) (2.8.4)
-Requirement already satisfied: typing-extensions&gt;=4.0.0 in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from beautifulsoup4-&gt;nbconvert) (4.15.0)
-Note: you may need to restart the kernel to use updated packages.
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">26.1.1</span> -&gt; <span class="ansi-green-fg">26.1.2</span>
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
+Requirement already satisfied: openpyxl in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (3.1.5)
+Requirement already satisfied: et-xmlfile in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (from openpyxl) (2.0.0)
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">26.1.1</span> -&gt; <span class="ansi-green-fg">26.1.2</span>
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
+Requirement already satisfied: xlsxwriter in /Users/huien/Documents/opus-tuition/.venv/lib/python3.14/site-packages (3.2.9)
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">26.1.1</span> -&gt; <span class="ansi-green-fg">26.1.2</span>
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7fc7abbb225579d4">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">ROUND_HALF_UP</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ab3bcd9ac7bf5d48">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=697569e2f2c5507a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7884,12 +7886,369 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Get the current directory of the notebook</span>
-<span class="n">notebook_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">openpyxl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">ROUND_HALF_UP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e39eefc482175973">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="Find-and-add-header-if-it-doesn't-exist">Find and add header if it doesn't exist<a class="anchor-link" href="#Find-and-add-header-if-it-doesn't-exist">¶</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5983cf2ae38fa7c7">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">openpyxl</span>
 
-<span class="c1"># Get the file path of data</span>
-<span class="n">tutor_assignments_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">notebook_dir</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">,</span> <span class="s2">"raw"</span><span class="p">,</span> <span class="s2">"tutor_assignments_raw.xlsx"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tutor_assignments_path</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_highlighted_header</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">max_scan_rows</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Load the workbook safely</span>
+        <span class="n">wb</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">load_workbook</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">data_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">first_sheet_name</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="n">first_sheet_name</span><span class="p">]</span>
+
+        <span class="c1"># Loop through up to 30 rows</span>
+        <span class="k">for</span> <span class="n">row_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_scan_rows</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">has_bold</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">has_color</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">row_values</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Loop through every cell in current row</span>
+            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">sheet</span><span class="p">[</span><span class="n">row_index</span><span class="p">]:</span>
+                <span class="n">cell_value</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">value</span>
+
+                <span class="c1"># Check if there is text in the cell</span>
+                <span class="k">if</span> <span class="n">cell_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cell_value</span> <span class="o">!=</span> <span class="s2">""</span><span class="p">:</span>
+                    <span class="n">row_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_value</span><span class="p">)</span>
+
+                    <span class="c1"># Check if cell's font is bolded</span>
+                    <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">font</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">font</span><span class="p">,</span> <span class="s1">'bold'</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="n">has_bold</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="c1"># Check if a fill pattern actually exists and isn't the default "none" string</span>
+                    <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">fill</span><span class="p">:</span>
+                        <span class="c1"># Verify the cell has a solid fill pattern</span>
+                        <span class="n">is_solid</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">fill</span><span class="p">,</span> <span class="s1">'fill_type'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'solid'</span>
+
+                        <span class="c1"># Verify that background fill color exists and has a valid RGB value</span>
+                        <span class="n">start_color</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">fill</span><span class="p">,</span> <span class="s1">'start_color'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="n">has_rgb</span> <span class="o">=</span> <span class="n">start_color</span> <span class="ow">and</span> <span class="n">start_color</span><span class="o">.</span><span class="n">rgb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+                        <span class="c1"># If both conditions are met, the cell has a custom background color</span>
+                        <span class="k">if</span> <span class="n">is_solid</span> <span class="ow">and</span> <span class="n">has_rgb</span><span class="p">:</span>
+                            <span class="n">has_color</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Check if the row have multiple data columns</span>
+            <span class="n">has_multiple_columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="c1"># Check if each cell in the current row is unique</span>
+            <span class="n">is_unique</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_values</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">row_values</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">has_multiple_columns</span> <span class="ow">and</span> <span class="n">has_color</span> <span class="ow">and</span> <span class="n">has_bold</span> <span class="ow">and</span> <span class="n">is_unique</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Header successfully matched at row </span><span class="si">{</span><span class="n">row_index</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">row_values</span><span class="p">)</span><span class="si">}</span><span class="s2"> unique columns found)!"</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">first_sheet_name</span><span class="p">,</span> <span class="p">(</span><span class="n">row_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="kc">True</span>
+
+        <span class="c1"># Fallback if the loop finishes without matching any specific criteria</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Notice: No highlighted header matched standard criteria. Defaulting to row 0."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">first_sheet_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: The file at path '</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">' was not found."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error reading or processing the Excel file header: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=4f7302a87bbd62e5">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_valid_date</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># Define the exact formats expected</span>
+    <span class="n">expected_formats</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span>   <span class="c1"># 2025-03-12</span>
+        <span class="s2">"%m/</span><span class="si">%d</span><span class="s2">/%Y"</span><span class="p">,</span>   <span class="c1"># 01/05/2025</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2">-%m-%Y"</span><span class="p">,</span>   <span class="c1"># 25-04-2025</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2">/%m/%y"</span><span class="p">,</span>   <span class="c1"># 25/04/26</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2"> %b %Y"</span><span class="p">,</span>   <span class="c1"># 12 Feb 2025</span>
+        <span class="s2">"%B </span><span class="si">%d</span><span class="s2">, %Y"</span><span class="p">,</span>  <span class="c1"># July 7, 2025</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2">-%b-%Y"</span>    <span class="c1"># 15-Oct-2025</span>
+    <span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Return False immediately for empty, null, or blank values</span>
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"None"</span><span class="p">,</span> <span class="s2">"NaN"</span><span class="p">,</span> <span class="s2">"nan"</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">clean_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># Return True the moment a format matches successfully</span>
+        <span class="k">for</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">expected_formats</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">clean_val</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Catch unexpected type conversion errors or pandas evaluation crashes</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error checking date validity for value '</span><span class="si">{</span><span class="n">raw_val</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Return False if all formatting options fail</span>
+    <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1b2d538ec3fe3f02">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">extract_numeric_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Extract the first block of digits, periods, or commas</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[\d.,]+"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="c1"># Remove formatting commas</span>
+            <span class="n">clean_num</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="c1"># Convert to float first to handle decimals like "50.00", then truncate to integer</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">clean_num</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3f5c9b78eda00460">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">extract_float_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Convert value to string and extract only the first numeric block</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[\d.,]+"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="c1"># Strip out commas and convert the clean number to a float</span>
+            <span class="n">clean_num</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">clean_num</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1e702f11d25c6a9d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_date</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parses a variety of date formats into a standard pandas Timestamp.</span>
+<span class="sd">    Returns a minimum fallback date if parsing fails so comparisons don't crash.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># pd.to_datetime handles strings, numbers, and datetime objects seamlessly</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'coerce'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">parsed</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">min</span>
+        <span class="k">return</span> <span class="n">parsed</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">min</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1cb5afae6cf4d32d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Look for custom highlighted headers first</span>
+<span class="n">sheet_name</span><span class="p">,</span> <span class="n">rows_to_skip</span><span class="p">,</span> <span class="n">header_found</span> <span class="o">=</span> <span class="n">find_highlighted_header</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">header_found</span><span class="p">:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">rows_to_skip</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Load without headers to start heuristic mapping</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">max_rows_to_check</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+    <span class="n">session_notes_words_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"reading"</span><span class="p">,</span> <span class="s2">"covered"</span><span class="p">,</span> <span class="s2">"timed"</span><span class="p">]</span>
+    <span class="n">invoice_notes_phases_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"awaiting bank transfer"</span><span class="p">,</span> <span class="s2">"no response from parent"</span><span class="p">]</span>
+    <span class="n">student_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"lim wei jie"</span><span class="p">]</span>
+    <span class="n">tutor_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ahmad rizwan"</span><span class="p">]</span>
+
+    <span class="n">first_data_row_index</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">existing_headers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">column_samples</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pass1_headers</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">PaymentStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">PAID</span> <span class="o">=</span> <span class="s2">"paid"</span>
+        <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">"pending"</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">AccountStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">ACTIVE</span> <span class="o">=</span> <span class="s2">"active"</span>
+        <span class="n">INACTIVE</span> <span class="o">=</span> <span class="s2">"inactive"</span>
+        <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">"pending"</span>
+
+    <span class="c1"># ==========================================</span>
+    <span class="c1"># PASS 1: Identify Structural Anchor Columns</span>
+    <span class="c1"># ==========================================</span>
+    <span class="k">for</span> <span class="n">col_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">column_sample</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col_index</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">max_rows_to_check</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">column_samples</span><span class="p">[</span><span class="n">col_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_sample</span>
+        <span class="n">matched_header</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">current_row_index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">column_sample</span><span class="p">):</span>
+            <span class="n">clean_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">else</span> <span class="s2">""</span>
+
+            <span class="k">if</span> <span class="n">clean_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"log"</span><span class="p">):</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Log ID"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"tas"</span><span class="p">):</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Assignment ID"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"inv"</span><span class="p">):</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Invoice ID"</span>
+            <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">clean_val</span> <span class="o">==</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">student_names</span><span class="p">):</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Student Name"</span>
+            <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">clean_val</span> <span class="o">==</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">tutor_names</span><span class="p">):</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Tutor Name"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"1.0"</span><span class="p">,</span> <span class="s2">"1.5"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">]:</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Duration (Hours)"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"present"</span><span class="p">,</span> <span class="s2">"absent"</span><span class="p">,</span> <span class="s2">"late"</span><span class="p">]:</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Attendance Status"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"english"</span><span class="p">,</span> <span class="s2">"mathematics"</span><span class="p">,</span> <span class="s2">"science"</span><span class="p">]:</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Subject"</span>
+            <span class="k">elif</span> <span class="s2">"primary"</span> <span class="ow">in</span> <span class="n">clean_val</span> <span class="ow">or</span> <span class="s2">"secondary"</span> <span class="ow">in</span> <span class="n">clean_val</span><span class="p">:</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Level"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span> <span class="o">==</span> <span class="n">PaymentStatus</span><span class="o">.</span><span class="n">PAID</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Payment Status"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span> <span class="ow">in</span> <span class="p">[</span><span class="n">AccountStatus</span><span class="o">.</span><span class="n">ACTIVE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">AccountStatus</span><span class="o">.</span><span class="n">INACTIVE</span><span class="o">.</span><span class="n">value</span><span class="p">]:</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Status"</span>
+            <span class="k">elif</span> <span class="n">clean_val</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"@tutors.com"</span><span class="p">):</span>
+                <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Contact Email"</span>
+
+            <span class="k">if</span> <span class="n">matched_header</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">matched_header</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_headers</span><span class="p">:</span>
+                    <span class="n">existing_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matched_header</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">first_data_row_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">current_row_index</span> <span class="o">&lt;</span> <span class="n">first_data_row_index</span><span class="p">:</span>
+                    <span class="n">first_data_row_index</span> <span class="o">=</span> <span class="n">current_row_index</span>
+                <span class="k">break</span>
+
+        <span class="n">pass1_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matched_header</span><span class="p">)</span>
+
+    <span class="c1"># ==========================================</span>
+    <span class="c1"># PASS 2: Resolve Context-Dependent Columns</span>
+    <span class="c1"># ==========================================</span>
+    <span class="n">new_headers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">is_lesson_log</span> <span class="o">=</span> <span class="s2">"Log ID"</span> <span class="ow">in</span> <span class="n">existing_headers</span> <span class="ow">and</span> <span class="s2">"Assignment ID"</span> <span class="ow">in</span> <span class="n">existing_headers</span>
+    <span class="n">is_invoice</span> <span class="o">=</span> <span class="s2">"Invoice ID"</span> <span class="ow">in</span> <span class="n">existing_headers</span> <span class="ow">and</span> <span class="s2">"Assignment ID"</span> <span class="ow">in</span> <span class="n">existing_headers</span>
+    <span class="n">is_assignment</span> <span class="o">=</span> <span class="s2">"Assignment ID"</span> <span class="ow">in</span> <span class="n">existing_headers</span> <span class="ow">and</span> <span class="s2">"Level"</span> <span class="ow">in</span> <span class="n">existing_headers</span> <span class="ow">and</span> <span class="s2">"Subject"</span> <span class="ow">in</span> <span class="n">existing_headers</span>
+
+    <span class="k">for</span> <span class="n">col_index</span><span class="p">,</span> <span class="n">matched_header</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pass1_headers</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">matched_header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">current_row_index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">column_samples</span><span class="p">[</span><span class="n">col_index</span><span class="p">]):</span>
+                <span class="n">clean_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">else</span> <span class="s2">""</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">numeric_val</span> <span class="o">=</span> <span class="n">extract_float_value</span><span class="p">(</span><span class="n">clean_val</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed extracting numeric value from row </span><span class="si">{</span><span class="n">current_row_index</span><span class="si">}</span><span class="s2">, col </span><span class="si">{</span><span class="n">col_index</span><span class="si">}</span><span class="s2"> ('</span><span class="si">{</span><span class="n">clean_val</span><span class="si">}</span><span class="s2">'): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">is_lesson_log</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">is_valid_date</span><span class="p">(</span><span class="n">clean_val</span><span class="p">):</span>
+                        <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Session Date"</span>
+                    <span class="k">elif</span> <span class="n">numeric_val</span> <span class="o">&gt;</span> <span class="mi">45</span><span class="p">:</span>
+                        <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Fees Charged"</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">clean_val</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">clean_val</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">session_notes_words_to_check</span><span class="p">):</span>
+                        <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Session Notes"</span>
+
+                <span class="k">if</span> <span class="n">is_invoice</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">is_valid_date</span><span class="p">(</span><span class="n">clean_val</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="s2">"Invoice Date"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_headers</span><span class="p">:</span>
+                            <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Invoice Date"</span>
+                            <span class="n">existing_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Invoice Date"</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Payment Date"</span>
+                            <span class="n">existing_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Payment Date"</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">numeric_val</span> <span class="o">&gt;</span> <span class="mi">45</span><span class="p">:</span>
+                        <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Amount"</span>
+                    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">clean_val</span> <span class="o">==</span> <span class="n">phase</span> <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">invoice_notes_phases_to_check</span><span class="p">):</span>
+                        <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Notes"</span>
+
+                <span class="k">if</span> <span class="n">is_assignment</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">is_valid_date</span><span class="p">(</span><span class="n">clean_val</span><span class="p">):</span>
+                        <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Start Date"</span>
+                    <span class="k">elif</span> <span class="n">numeric_val</span> <span class="o">&gt;</span> <span class="mi">45</span><span class="p">:</span>
+                        <span class="n">matched_header</span> <span class="o">=</span> <span class="s2">"Hourly Rate"</span>
+
+                <span class="k">if</span> <span class="n">matched_header</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">first_data_row_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">current_row_index</span> <span class="o">&lt;</span> <span class="n">first_data_row_index</span><span class="p">:</span>
+                        <span class="n">first_data_row_index</span> <span class="o">=</span> <span class="n">current_row_index</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Assign a fallback structural index label if unmatched</span>
+        <span class="n">new_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matched_header</span> <span class="k">if</span> <span class="n">matched_header</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"Column_</span><span class="si">{</span><span class="n">col_index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">new_headers</span>
+
+    <span class="c1"># Crop data to match discovered table boundaries</span>
+    <span class="k">if</span> <span class="n">first_data_row_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">first_data_row_index</span><span class="p">:]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Heuristic column mapping completed successfully!"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7902,36 +8261,63 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>/Users/huien/Documents/opus-tuition/src/data_cleaning/data/raw/tutor_assignments_raw.xlsx
+<pre>Header successfully matched at row 8 (9 unique columns found)!
 </pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c6fd7dac51658289">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Read-the-dataset">Read the dataset<a class="anchor-link" href="#Read-the-dataset">¶</a></h4>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=483c75ff364f52b3">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=40ac821704efdfca">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Read the dataset</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">tutor_assignments_path</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
-
-<span class="c1"># Get first five row of the dataset</span>
-<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;class 'pandas.DataFrame'&gt;
+RangeIndex: 15 entries, 0 to 14
+Data columns (total 9 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Assignment ID      13 non-null     str    
+ 1   Tutor Name         13 non-null     str    
+ 2   Student Name       12 non-null     str    
+ 3   Subject            13 non-null     str    
+ 4   Level              13 non-null     str    
+ 5   Hourly Rate (SGD)  13 non-null     float64
+ 6   Start Date         13 non-null     str    
+ 7   Status             13 non-null     str    
+ 8   Contact Email      12 non-null     str    
+dtypes: float64(1), str(8)
+memory usage: 1.2 KB
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=23d57a99dea7361d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="n">df</span>
 </pre></div>
 </div>
 </div>
@@ -7942,7 +8328,7 @@ Note: you may need to restart the kernel to use updated packages.
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8034,6 +8420,126 @@ Note: you may need to restart the kernel to use updated packages.
 <td>Active</td>
 <td>ahmad.r@tutors.com</td>
 </tr>
+<tr>
+<th>5</th>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>6</th>
+<td>TAS-006</td>
+<td>David Kwok</td>
+<td>Ethan Ng</td>
+<td>Chemistry</td>
+<td>Junior College 1</td>
+<td>70.0</td>
+<td>25-04-2025</td>
+<td>Inactive</td>
+<td>david.k@tutors.com</td>
+</tr>
+<tr>
+<th>7</th>
+<td>TAS-007</td>
+<td>Nurul Huda</td>
+<td>NaN</td>
+<td>Physics</td>
+<td>Secondary 2</td>
+<td>50.0</td>
+<td>2025-06-01</td>
+<td>Active</td>
+<td>nurul.h@tutors.com</td>
+</tr>
+<tr>
+<th>8</th>
+<td>TAS-008</td>
+<td>Marcus Chan</td>
+<td>Aisha Binte Yusof</td>
+<td>maths</td>
+<td>Secondary 1</td>
+<td>45.0</td>
+<td>July 7, 2025</td>
+<td>active</td>
+<td>marcus.c@tutors.com</td>
+</tr>
+<tr>
+<th>9</th>
+<td>TAS-009</td>
+<td>Priya Nair</td>
+<td>Tan Xiu Ying</td>
+<td>English</td>
+<td>Primary 5</td>
+<td>45.0</td>
+<td>2025-03-12</td>
+<td>Active</td>
+<td>priya.n@tutors.com</td>
+</tr>
+<tr>
+<th>10</th>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>11</th>
+<td>TAS-010</td>
+<td>Li Mei</td>
+<td>Darren Foo</td>
+<td>Biology</td>
+<td>Secondary 3</td>
+<td>55.0</td>
+<td>08/20/2025</td>
+<td>Active</td>
+<td>li.mei@tutors.com</td>
+</tr>
+<tr>
+<th>12</th>
+<td>TAS-011</td>
+<td>Jason Teo</td>
+<td>Raeanne Ong</td>
+<td>Mathematics</td>
+<td>Secondary 4</td>
+<td>60.0</td>
+<td>2025-09-01</td>
+<td>Pending</td>
+<td>jason.t@tutors.com</td>
+</tr>
+<tr>
+<th>13</th>
+<td>TAS-012</td>
+<td>Sarah Lim</td>
+<td>Jordan Tan</td>
+<td>Science</td>
+<td>Primary 4</td>
+<td>45.0</td>
+<td>15-Oct-2025</td>
+<td>Active</td>
+<td>sarah.l@tutors.com</td>
+</tr>
+<tr>
+<th>14</th>
+<td>TAS-013</td>
+<td>Ahmad Rizwan</td>
+<td>Lim Wei Jie</td>
+<td>Mathematics</td>
+<td>Secondary 3</td>
+<td>55.0</td>
+<td>01/05/2025</td>
+<td>Active</td>
+<td>ahmad.r@tutors.com</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -8042,249 +8548,7 @@ Note: you may need to restart the kernel to use updated packages.
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=cda6ae80f78bd484">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Analyse-the-dataset">Analyse the dataset<a class="anchor-link" href="#Analyse-the-dataset">¶</a></h4>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2ba7ecf36592e870">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Get the number of columns and rows of the dataset</span>
-<span class="n">df</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>(15, 9)</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7257dfc96e0104d3">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Get the column names</span>
-<span class="n">column_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>['Assignment ID', 'Tutor Name', 'Student Name', 'Subject', 'Level', 'Hourly Rate (SGD)', 'Start Date', 'Status', 'Contact Email']
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=dde91de03893921d">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Check for data types</span>
-<span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>&lt;class 'pandas.DataFrame'&gt;
-RangeIndex: 15 entries, 0 to 14
-Data columns (total 9 columns):
- #   Column             Non-Null Count  Dtype  
----  ------             --------------  -----  
- 0   Assignment ID      13 non-null     str    
- 1   Tutor Name         13 non-null     str    
- 2   Student Name       12 non-null     str    
- 3   Subject            13 non-null     str    
- 4   Level              13 non-null     str    
- 5   Hourly Rate (SGD)  13 non-null     float64
- 6   Start Date         13 non-null     str    
- 7   Status             13 non-null     str    
- 8   Contact Email      12 non-null     str    
-dtypes: float64(1), str(8)
-memory usage: 1.2 KB
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=db560f3b1992eb27">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Get distinct value for subject</span>
-<span class="n">subject</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>['Mathematics', 'english', 'MATHEMATICS', 'Science', nan, 'Chemistry', 'Physics', 'maths', 'English', 'Biology']
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8a406f5620f81f84">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Get distinct value for level</span>
-<span class="n">level</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"Level"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>['Secondary 3', 'Primary 5', 'Secondary 4', 'Primary 6', nan, 'Junior College 1', 'Secondary 2', 'Secondary 1', 'Primary 4']
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a9648c2863d4c895">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Get distinct value for payment status</span>
-<span class="n">status</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"Status"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>['Active', 'active', 'ACTIVE', nan, 'Inactive', 'Pending']
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ef0d476a147ef384">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Identify duplicated rows</span>
-<span class="n">duplicate_rows</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"Tutor Name"</span><span class="p">,</span> <span class="s2">"Student Name"</span><span class="p">,</span> <span class="s2">"Start Date"</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">duplicate_rows</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>   Assignment ID    Tutor Name  Student Name      Subject        Level  \
-0        TAS-001  Ahmad Rizwan   Lim Wei Jie  Mathematics  Secondary 3   
-1        TAS-002    Priya Nair  Tan Xiu Ying      english    Primary 5   
-4        TAS-005  Ahmad Rizwan   Lim Wei Jie  Mathematics  Secondary 3   
-5            NaN           NaN           NaN          NaN          NaN   
-9        TAS-009    Priya Nair  Tan Xiu Ying      English    Primary 5   
-10           NaN           NaN           NaN          NaN          NaN   
-14       TAS-013  Ahmad Rizwan   Lim Wei Jie  Mathematics  Secondary 3   
-
-    Hourly Rate (SGD)  Start Date  Status       Contact Email  
-0                55.0  01/05/2025  Active  ahmad.r@tutors.com  
-1                45.0  2025-03-12  active  priya.n@tutors.com  
-4                55.0  01/05/2025  Active  ahmad.r@tutors.com  
-5                 NaN         NaN     NaN                 NaN  
-9                45.0  2025-03-12  Active  priya.n@tutors.com  
-10                NaN         NaN     NaN                 NaN  
-14               55.0  01/05/2025  Active  ahmad.r@tutors.com  
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d42993455b47acb9">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=20b0941694ae8ada">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8294,7 +8558,7 @@ memory usage: 1.2 KB
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2997a2c76b2cf41a">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=28b7e56721ae3b6a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8302,14 +8566,65 @@ memory usage: 1.2 KB
 <div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Remove duplicates, leaving only last occurrence</span>
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"Tutor Name"</span><span class="p">,</span> <span class="s2">"Student Name"</span><span class="p">,</span> <span class="s2">"Start Date"</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">"last"</span><span class="p">)</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Create a brand new copy first</span>
+<span class="n">df_copy</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># Clean the column names on the new copy</span>
+<span class="n">df_copy</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df_copy</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+<span class="c1"># Strip text data columns on the new copy only</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_copy</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">"object"</span><span class="p">,</span> <span class="s2">"string"</span><span class="p">]):</span>
+    <span class="n">df_copy</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_copy</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\s+"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">df_copy</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_copy</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="s2">"nan"</span><span class="p">,</span> <span class="s2">"None"</span><span class="p">,</span> <span class="s2">""</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># Drop blank rows where all values are nulls (Fixed Syntax)</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_copy</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+
+<span class="c1"># Remove duplicates safely (Fixed logic to check df_cleaned columns)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"Invoice ID"</span> <span class="ow">in</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"Invoice ID"</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">"last"</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="s2">"Attendance ID"</span> <span class="ow">in</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"Attendance ID"</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">"last"</span><span class="p">)</span>
+
+        <span class="c1"># Second, drop based on the combination of details if they exist</span>
+        <span class="n">secondary_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Tutor Name"</span><span class="p">,</span> <span class="s2">"Student Name"</span><span class="p">,</span> <span class="s2">"Start Date"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">col</span> <span class="ow">in</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">secondary_cols</span><span class="p">):</span>
+            <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">secondary_cols</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="s2">"last"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: Secondary columns for 'Attendance ID' duplicate check are missing. Skipping second drop."</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="s2">"Log ID"</span> <span class="ow">in</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="c1"># First, drop based on Log ID</span>
+        <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"Log ID"</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">"last"</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Fallback keeps the cleaned data if no specific ID column matches</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Notice: No matching ID column found. Keeping cleaned dataframe as is."</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error during duplicate removal: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Falling back to clean dataframe copy."</span><span class="p">)</span>
+    <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_copy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2a926cb02c90efac">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Notice: No matching ID column found. Keeping cleaned dataframe as is.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1097fe54cbe10704">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8317,14 +8632,74 @@ memory usage: 1.2 KB
 <div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Drop blank rows with all values are nulls</span>
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">process_string_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns_to_convert</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Checks if specific columns exist and converts them to string dtype safely.</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns_to_convert</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"string"</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Successfully converted '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' to string dtype."</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping: Column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' does not exist."</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error converting column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="c1"># 1. Define your target columns</span>
+<span class="n">columns_to_stringify</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Invoice ID"</span><span class="p">,</span>
+    <span class="s2">"Tutor ID"</span><span class="p">,</span>
+    <span class="s2">"Student Name"</span><span class="p">,</span>
+    <span class="s2">"Tutor Name"</span><span class="p">,</span>
+    <span class="s2">"Payment Status"</span><span class="p">,</span>
+    <span class="s2">"Notes"</span><span class="p">,</span>
+    <span class="s2">"Log ID"</span><span class="p">,</span>
+    <span class="s2">"Assignment ID"</span><span class="p">,</span>
+    <span class="s2">"Attendance Status"</span><span class="p">,</span>
+    <span class="s2">"Session Notes"</span><span class="p">,</span>
+    <span class="s2">"Subject"</span><span class="p">,</span>
+    <span class="s2">"Level"</span><span class="p">,</span>
+    <span class="s2">"Status"</span><span class="p">,</span>
+    <span class="s2">"Contact Email"</span>
+<span class="p">]</span>
+
+<span class="c1"># 2. Process them all with a single function call</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">process_string_columns</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="n">columns_to_stringify</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a4f495dec9002566">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Skipping: Column 'Invoice ID' does not exist.
+Skipping: Column 'Tutor ID' does not exist.
+Successfully converted 'Student Name' to string dtype.
+Successfully converted 'Tutor Name' to string dtype.
+Skipping: Column 'Payment Status' does not exist.
+Skipping: Column 'Notes' does not exist.
+Skipping: Column 'Log ID' does not exist.
+Successfully converted 'Assignment ID' to string dtype.
+Skipping: Column 'Attendance Status' does not exist.
+Skipping: Column 'Session Notes' does not exist.
+Successfully converted 'Subject' to string dtype.
+Successfully converted 'Level' to string dtype.
+Successfully converted 'Status' to string dtype.
+Successfully converted 'Contact Email' to string dtype.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5a49bff13368e51a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8332,64 +8707,51 @@ memory usage: 1.2 KB
 <div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_single_column</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="c1"># 1. Define the exact formats found in your Opus Tuition export image</span>
-    <span class="n">expected_formats</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span>   <span class="c1"># 2025-03-12</span>
-        <span class="s2">"%m/</span><span class="si">%d</span><span class="s2">/%Y"</span><span class="p">,</span>   <span class="c1"># 01/05/2025</span>
-        <span class="s2">"</span><span class="si">%d</span><span class="s2">-%m-%Y"</span><span class="p">,</span>   <span class="c1"># 25-04-2025</span>
-        <span class="s2">"</span><span class="si">%d</span><span class="s2">/%m/%y"</span><span class="p">,</span>   <span class="c1"># 25/04/26</span>
-        <span class="s2">"</span><span class="si">%d</span><span class="s2"> %b %Y"</span><span class="p">,</span>   <span class="c1"># 12 Feb 2025</span>
-        <span class="s2">"%B </span><span class="si">%d</span><span class="s2">, %Y"</span><span class="p">,</span>  <span class="c1"># July 7, 2025</span>
-        <span class="s2">"</span><span class="si">%d</span><span class="s2">-%b-%Y"</span>    <span class="c1"># 15-Oct-2025</span>
-    <span class="p">]</span>
-
-    <span class="n">parsed_values</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">error_log</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># 2. Loop only through the target column</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">raw_val</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"None"</span><span class="p">,</span> <span class="s2">"NaN"</span><span class="p">]:</span>
-            <span class="n">parsed_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">NaT</span><span class="p">)</span>
-            <span class="k">continue</span>
-
-        <span class="n">clean_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="k">for</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">expected_formats</span><span class="p">:</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">capitalise_string_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns_to_format</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Safely converts specified string columns to lowercase, then capitalises</span>
+<span class="sd">    the first letter of each word.</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns_to_format</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">parsed_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">clean_val</span><span class="p">,</span> <span class="n">fmt</span><span class="p">))</span>
-                <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">break</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="k">continue</span>
+                <span class="c1"># Python's built-in command MUST use 'z'</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Successfully capitalised strings in column: '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error capitalising column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping: Column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' does not exist."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
-            <span class="c1"># Capture specific row index and offending value</span>
-            <span class="n">error_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Row </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: '</span><span class="si">{</span><span class="n">raw_val</span><span class="si">}</span><span class="s2">' cannot be parsed."</span><span class="p">)</span>
-            <span class="n">parsed_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">NaT</span><span class="p">)</span>
-
-    <span class="c1"># 3. If any row failed, stop everything and throw a specific error</span>
-    <span class="k">if</span> <span class="n">error_log</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Data Integrity Error in column [</span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s2">].</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="sa">f</span><span class="s2">"Details:</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_log</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="c1"># 4. If all passed, overwrite only that single column with the datetime type</span>
-    <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed_values</span>
     <span class="k">return</span> <span class="n">df</span>
 
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">parse_single_column</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="s2">"Start Date"</span><span class="p">)</span>
+<span class="c1"># Define the list of columns for cleaning</span>
+<span class="n">target_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Payment Status"</span><span class="p">,</span> <span class="s2">"Attendance Status"</span><span class="p">,</span> <span class="s2">"Subject"</span><span class="p">,</span> <span class="s2">"Status"</span><span class="p">]</span>
+
+<span class="c1"># Apply the function to all target columns at once</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">capitalise_string_columns</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=bef763acb8010792">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Skipping: Column 'Payment Status' does not exist.
+Skipping: Column 'Attendance Status' does not exist.
+Successfully capitalised strings in column: 'Subject'
+Successfully capitalised strings in column: 'Status'
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=16db031b6c6cdfdb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8397,26 +8759,47 @@ memory usage: 1.2 KB
 <div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">handle_string_column</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
-    <span class="c1"># Ensure we are treating the data as string</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"string"</span><span class="p">)</span>
-    <span class="c1"># Strip leading, trailing &amp; replace internal excess whitespaces</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\s+"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="c1"># Lowercase and capitalize</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">s</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">titlecase_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns_to_format</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Capitalises the first letter of every word.</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns_to_format</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Successfully applied Title Case to: '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error processing title case on '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping: Column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' does not exist."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
 
 <span class="c1"># Define the list of columns for cleaning</span>
-<span class="n">target_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Subject"</span><span class="p">,</span> <span class="s2">"Status"</span><span class="p">]</span>
+<span class="n">target_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Student Name"</span><span class="p">,</span> <span class="s2">"Teacher Name"</span><span class="p">,</span> <span class="s2">"Level"</span><span class="p">]</span>
 
 <span class="c1"># Apply the function to all target columns at once</span>
-<span class="n">df_cleaned</span><span class="p">[</span><span class="n">target_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="n">target_cols</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">handle_string_column</span><span class="p">)</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">titlecase_columns</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="n">target_cols</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=abe7e91097b2bf9d">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Successfully applied Title Case to: 'Student Name'
+Skipping: Column 'Teacher Name' does not exist.
+Successfully applied Title Case to: 'Level'
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=147a05d5662a28a1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8424,14 +8807,82 @@ memory usage: 1.2 KB
 <div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Replace specific abbreviations</span>
-<span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s2">"Maths"</span><span class="p">:</span> <span class="s2">"Mathematics"</span><span class="p">})</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">standardise_column_values</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Applies specific cleanup rules to Payment Status, Attendance Status,</span>
+<span class="sd">    Duration (Hours), and Fees Charged columns if they exist.</span>
+<span class="sd">    """</span>
+    <span class="c1"># 1. Clean up "Payment Status"</span>
+    <span class="k">if</span> <span class="s2">"Payment Status"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Replace "Pend" with "Pending"</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">"Payment Status"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"Payment Status"</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s2">"Pend"</span><span class="p">:</span> <span class="s2">"Pending"</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error processing 'Payment Status': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Skipping 'Payment Status': Column does not exist."</span><span class="p">)</span>
+
+    <span class="c1"># 2. Clean up "Attendance Status"</span>
+    <span class="k">if</span> <span class="s2">"Attendance Status"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">"Attendance Status"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"Attendance Status"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">"Absent"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error processing 'Attendance Status': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Skipping 'Attendance Status': Column does not exist."</span><span class="p">)</span>
+
+    <span class="c1"># 3. Clean up "Duration (Hours)"</span>
+    <span class="k">if</span> <span class="s2">"Duration (Hours)"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Replace null values to 1.0 by default</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"Duration (Hours)"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error processing 'Duration (Hours)': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Skipping 'Duration (Hours)': Column does not exist."</span><span class="p">)</span>
+
+    <span class="c1"># 4. Clean up "Fees Charged"</span>
+    <span class="k">if</span> <span class="s2">"Fees Charged"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">"Fees Charged"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"Fees Charged"</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">'^[A-Za-z]+$'</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error processing 'Fees Charged': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Skipping 'Fees Charged': Column does not exist."</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"Subject"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s2">"Maths"</span><span class="p">:</span> <span class="s2">"Mathematics"</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error processing 'Subject': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Skipping 'Subject': Column does not exist."</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">standardise_column_values</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3712c83f92588ce3">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Skipping 'Payment Status': Column does not exist.
+Skipping 'Attendance Status': Column does not exist.
+Skipping 'Duration (Hours)': Column does not exist.
+Skipping 'Fees Charged': Column does not exist.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e43d2ba588deb23a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8439,73 +8890,7 @@ memory usage: 1.2 KB
 <div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Extract numbers, periods, and commas. Handle missing values safely.</span>
-<span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Hourly Rate (SGD)"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Hourly Rate (SGD)"</span><span class="p">]</span>
-    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([\d.,]+)"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="c1"># Convert to Decimal and strictly round to 2 decimal places</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">to_rounded_decimal</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-    <span class="c1"># Catch null and empty strings</span>
-    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"nan"</span><span class="p">,</span> <span class="s2">""</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Quantize ensures exactly two decimal places (.01)</span>
-        <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">"0.01"</span><span class="p">),</span> <span class="n">rounding</span><span class="o">=</span><span class="n">ROUND_HALF_UP</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-<span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Hourly Rate (SGD)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Hourly Rate (SGD)"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_rounded_decimal</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=106f0db0f31830e5">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Convert selected columns to the modern string dtype</span>
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
-    <span class="s2">"Assignment ID"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
-    <span class="s2">"Tutor Name"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
-    <span class="s2">"Student Name"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
-    <span class="s2">"Level"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
-    <span class="s2">"Contact Email"</span><span class="p">:</span> <span class="s2">"string"</span>
-<span class="p">})</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e3ddcbda1990bd85">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Validate-dataset">Validate dataset<a class="anchor-link" href="#Validate-dataset">¶</a></h4>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b7e904ca08432770">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Check data frame's summary</span>
-<span class="n">df_cleaned</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="n">df_cleaned</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -8521,35 +8906,108 @@ memory usage: 1.2 KB
 <pre>&lt;class 'pandas.DataFrame'&gt;
 Index: 13 entries, 0 to 14
 Data columns (total 9 columns):
- #   Column             Non-Null Count  Dtype         
----  ------             --------------  -----         
- 0   Assignment ID      13 non-null     string        
- 1   Tutor Name         13 non-null     string        
- 2   Student Name       12 non-null     string        
- 3   Subject            13 non-null     string        
- 4   Level              13 non-null     string        
- 5   Hourly Rate (SGD)  13 non-null     object        
- 6   Start Date         13 non-null     datetime64[us]
- 7   Status             13 non-null     string        
- 8   Contact Email      12 non-null     string        
-dtypes: datetime64[us](1), object(1), string(7)
-memory usage: 1.0+ KB
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Assignment ID      13 non-null     string 
+ 1   Tutor Name         13 non-null     string 
+ 2   Student Name       12 non-null     string 
+ 3   Subject            13 non-null     string 
+ 4   Level              13 non-null     string 
+ 5   Hourly Rate (SGD)  13 non-null     float64
+ 6   Start Date         13 non-null     str    
+ 7   Status             13 non-null     string 
+ 8   Contact Email      12 non-null     string 
+dtypes: float64(1), str(1), string(7)
+memory usage: 1.0 KB
 </pre>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6f09172046d81aaa">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=88330f6f538ad5a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Get distinct value for subject</span>
-<span class="n">subject</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">[</span><span class="s2">"Subject"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_date</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="n">expected_formats</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span>     <span class="c1"># 2025-03-12</span>
+        <span class="s2">"%m/</span><span class="si">%d</span><span class="s2">/%Y"</span><span class="p">,</span>     <span class="c1"># 01/05/2025</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2">-%m-%Y"</span><span class="p">,</span>     <span class="c1"># 25-04-2025</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2"> %b %Y"</span><span class="p">,</span>     <span class="c1"># 12 Feb 2025</span>
+        <span class="s2">"%B </span><span class="si">%d</span><span class="s2">, %Y"</span><span class="p">,</span>    <span class="c1"># July 7, 2025</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2">-%b-%Y"</span><span class="p">,</span>     <span class="c1"># 15-Oct-2025</span>
+        <span class="s2">"</span><span class="si">%d</span><span class="s2">/%m/%y"</span>      <span class="c1"># 12/03/25</span>
+    <span class="p">]</span>
+
+    <span class="n">parsed_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">error_log</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Loop only through the target column</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">raw_val</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"None"</span><span class="p">,</span> <span class="s2">"NaN"</span><span class="p">]:</span>
+            <span class="n">parsed_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">NaT</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">clean_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">raw_val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">expected_formats</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parsed_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">clean_val</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+                <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+            <span class="c1"># Capture specific row index and offending value</span>
+            <span class="n">error_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Row </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: '</span><span class="si">{</span><span class="n">raw_val</span><span class="si">}</span><span class="s2">' cannot be parsed."</span><span class="p">)</span>
+            <span class="n">parsed_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">NaT</span><span class="p">)</span>
+
+    <span class="c1"># If any row failed, stop everything and throw a specific error</span>
+    <span class="k">if</span> <span class="n">error_log</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Data Integrity Error in column [</span><span class="si">{</span><span class="n">col_name</span><span class="si">}</span><span class="s2">].</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"Details:</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_log</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">parsed_values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"string"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=338ac5ed8c58b43e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">process_date_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns_to_parse</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Checks if specific date columns exist and parses them safely.</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns_to_parse</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">parse_date</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Column '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' exists, but parsing failed due to data formatting: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping parsing: '</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">' column is missing from this file."</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="c1"># Pass everything inside a single list</span>
+<span class="n">target_dates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Invoice Date"</span><span class="p">,</span> <span class="s2">"Payment Date"</span><span class="p">,</span> <span class="s2">"Session Date"</span><span class="p">,</span> <span class="s2">"Start Date"</span><span class="p">]</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">process_date_columns</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="n">target_dates</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8562,18 +9020,218 @@ memory usage: 1.0+ KB
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>['Mathematics', 'English', 'Science', 'Chemistry', 'Physics', 'Biology']
+<pre>Skipping parsing: 'Invoice Date' column is missing from this file.
+Skipping parsing: 'Payment Date' column is missing from this file.
+Skipping parsing: 'Session Date' column is missing from this file.
 </pre>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ca931312b0d1a86f">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=997cbaef73e8dbd5">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Convert to Decimal and strictly round to 2 decimal places</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_rounded_decimal</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="c1"># Catch null and empty strings</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"nan"</span><span class="p">,</span> <span class="s2">""</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">formats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">"0.1"</span><span class="p">),</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">"0.01"</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="n">quantize_format</span> <span class="o">=</span> <span class="n">formats</span><span class="p">[</span><span class="n">places</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">quantize_format</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="n">ROUND_HALF_UP</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=bf6a75cf87f71afb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_and_round_decimal</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">places</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">column_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping: Column '</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">' does not exist."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([\d.,]+)"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_rounded_decimal</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="n">places</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error cleaning '</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">parse_and_round_decimal</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="s2">"Amount"</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">parse_and_round_decimal</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="s2">"Fees Charged"</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">parse_and_round_decimal</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="s2">"Duration (Hours)"</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">parse_and_round_decimal</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="s2">"Hourly Rate (SGD)"</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Skipping: Column 'Amount' does not exist.
+Skipping: Column 'Fees Charged' does not exist.
+Skipping: Column 'Duration (Hours)' does not exist.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=50a2dc6bfa59dd39">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="Add-styling-to-header-and-generate-output">Add styling to header and generate output<a class="anchor-link" href="#Add-styling-to-header-and-generate-output">¶</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=498a6688a76f390">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">cleaned_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">notebook_dir</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">,</span> <span class="s2">"cleaned"</span><span class="p">,</span> <span class="s2">"a.xlsx"</span><span class="p">)</span>
+
+    <span class="c1"># Defensive check: Automatically create the target folders if they do not exist</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">cleaned_data_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">cleaned_data_path</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">"xlsxwriter"</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+        <span class="c1"># Drop data into Excel. header=False prevents double headers.</span>
+        <span class="n">df_cleaned</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">"Reported Data"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">startrow</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">workbook</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">book</span>
+        <span class="n">worksheet</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">sheets</span><span class="p">[</span><span class="s2">"Reported Data"</span><span class="p">]</span>
+
+        <span class="c1"># Define Header Format (Navy Blue background, White Bold text)</span>
+        <span class="n">header_format</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">add_format</span><span class="p">({</span>
+            <span class="s2">"bold"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"bg_color"</span><span class="p">:</span> <span class="s2">"#1B3A6B"</span><span class="p">,</span>
+            <span class="s2">"font_color"</span><span class="p">:</span> <span class="s2">"#FFFFFF"</span><span class="p">,</span>
+            <span class="s2">"align"</span><span class="p">:</span> <span class="s2">"left"</span><span class="p">,</span>
+            <span class="s2">"valign"</span><span class="p">:</span> <span class="s2">"vcenter"</span><span class="p">,</span>
+            <span class="s2">"border"</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">})</span>
+
+        <span class="n">id_text_format</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">add_format</span><span class="p">({</span>
+            <span class="s2">"num_format"</span><span class="p">:</span> <span class="s2">"@"</span><span class="p">,</span>          <span class="c1"># '@' tells Excel: "This is a strict text string, do not touch it!"</span>
+            <span class="s2">"align"</span><span class="p">:</span> <span class="s2">"left"</span>
+        <span class="p">})</span>
+
+        <span class="n">money_format</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">add_format</span><span class="p">({</span>
+            <span class="s2">"num_format"</span><span class="p">:</span> <span class="s2">"#,##0.00"</span><span class="p">,</span>  <span class="c1"># Forces 2 decimal places (e.g., 45.00)</span>
+            <span class="s2">"align"</span><span class="p">:</span> <span class="s2">"right"</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Define a format for 1 decimal place columns (like Duration)</span>
+        <span class="n">duration_format</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">add_format</span><span class="p">({</span>
+            <span class="s2">"num_format"</span><span class="p">:</span> <span class="s2">"0.0"</span><span class="p">,</span>       <span class="c1"># Forces 1 decimal place (e.g., 1.5)</span>
+            <span class="s2">"align"</span><span class="p">:</span> <span class="s2">"right"</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Write the clean header list onto Row 0 manually</span>
+        <span class="k">for</span> <span class="n">col_index</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_cleaned</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">worksheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">col_index</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">col_name</span><span class="p">),</span> <span class="n">header_format</span><span class="p">)</span>
+
+        <span class="n">column_formats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"Amount"</span><span class="p">:</span> <span class="n">money_format</span><span class="p">,</span>
+            <span class="s2">"Fees Charged"</span><span class="p">:</span> <span class="n">money_format</span><span class="p">,</span>
+            <span class="s2">"Hourly Rate"</span><span class="p">:</span> <span class="n">money_format</span><span class="p">,</span>
+            <span class="s2">"Duration (Hours)"</span><span class="p">:</span> <span class="n">duration_format</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">col_index</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_cleaned</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="c1"># Determine the column format, defaulting to None (standard)</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="n">column_formats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span>
+
+            <span class="c1"># Calculate column width</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">col_name</span><span class="p">)),</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">5</span>
+            <span class="n">final_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_len</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+
+            <span class="c1"># Apply column settings</span>
+            <span class="n">worksheet</span><span class="o">.</span><span class="n">set_column</span><span class="p">(</span><span class="n">col_index</span><span class="p">,</span> <span class="n">col_index</span><span class="p">,</span> <span class="n">final_width</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File completely generated and styled at: </span><span class="si">{</span><span class="n">cleaned_data_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[DATA ERROR]: Mapping failed due to a missing structural column index: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[SYSTEM ERROR]: Failed to generate styled Excel report: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>File completely generated and styled at: /Users/huien/Documents/opus-tuition/src/data_cleaning/data/cleaned/a.xlsx
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=24a2d24653e195b3">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="Validate-dataset">Validate dataset<a class="anchor-link" href="#Validate-dataset">¶</a></h4>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=3f86037e4cc1f9da">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython2"><pre><span></span><span class="c1"># Print the final cleaned results</span>
@@ -8588,7 +9246,7 @@ memory usage: 1.0+ KB
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[21]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[23]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8779,6 +9437,49 @@ memory usage: 1.0+ KB
 </tbody>
 </table>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=48fd621393d96d1b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython2"><pre><span></span><span class="c1"># View summary of dataframe</span>
+<span class="n">df_cleaned</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;class 'pandas.DataFrame'&gt;
+Index: 13 entries, 0 to 14
+Data columns (total 9 columns):
+ #   Column             Non-Null Count  Dtype 
+---  ------             --------------  ----- 
+ 0   Assignment ID      13 non-null     string
+ 1   Tutor Name         13 non-null     string
+ 2   Student Name       12 non-null     string
+ 3   Subject            13 non-null     string
+ 4   Level              13 non-null     string
+ 5   Hourly Rate (SGD)  13 non-null     object
+ 6   Start Date         13 non-null     string
+ 7   Status             13 non-null     string
+ 8   Contact Email      12 non-null     string
+dtypes: object(1), string(8)
+memory usage: 1.0+ KB
+</pre>
 </div>
 </div>
 </div>
