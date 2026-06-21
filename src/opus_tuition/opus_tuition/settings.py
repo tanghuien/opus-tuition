@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'invoices.apps.InvoicesConfig',
     'lesson_logs.apps.LessonLogsConfig',
     'uploads.apps.UploadsConfig',
-    'django_extensions'
+    'django_extensions',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

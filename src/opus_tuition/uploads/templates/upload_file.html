@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OPUS Tuition</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'upload_file.css' %}">
+</head>
+<body>
+
+    <h1>Data ingestion and processing platform</h1>
+
+    <section>
+        <h2>Ingest New File</h2>
+        <form id="uploadForm">
+            {% csrf_token %}
+            <input type="file" id="fileInput" accept=".xlsx, .xls" multiple required>
+            <button type="submit">Process file through pipeline</button>
+        </form>
+        <div id="loader" class="hidden">Processing file through pipeline... please wait.</div>
+    </section>
+
+    <section>
+        <h2>Upload Logs</h2>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Upload ID</th>
+                    <th>File Name</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody">
+                {% for upload in uploads %}
+                <tr>
+                    <td>{{ upload.upload_id }}</td>
+                    <td>{{ upload.raw_file.name }}</td>
+                    <td>
+                        <span class="badge {% if upload.status == 'COMPLETED' %}success{% else %}danger{% endif %}">
+                            {{ upload.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="loadUploadContext('{{ upload.upload_id }}', '{{ upload.raw_file.name|escapejs }}')">
+                            Examine Details
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="pagination" style="margin-top: 15px;">
+            {% if uploads.has_previous %}
+                <a href="?page=1">&laquo; First</a>
+                <a href="?page={{ uploads.previous_page_number }}">Previous</a>
+            {% endif %}
+        
+            <span>Page {{ uploads.number }} of {{ uploads.paginator.num_pages }}</span>
+        
+            {% if uploads.has_next %}
+                <a href="?page={{ uploads.next_page_number }}">Next</a>
+                <a href="?page={{ uploads.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <div id="workspaceContainer" class="hidden">
+        <div class="flex-between">
+            <h2>Inspection: <span id="activeTargetName"></span></h2>
+            <button onclick="closeWorkspace()" style="background:#fecaca;">Close [X]</button>
+        </div>
+        <section id="errorLogSection" style="border-color: #f59e0b;" class="hidden">
+            <h3>Validation Error Log</h3>
+            <table id="errorTable">
+                <thead>
+                    <tr>
+                        <th>Row #</th>
+                        <th>Type</th>
+                        <th>Error Message</th>
+                    </tr>
+                </thead>
+                <tbody id="errorBody">
+                    </tbody>
+            </table>
+        </section>
+        <section>
+            <div class="flex-between">
+                <h3>Processing Summary</h3>
+                <a id="downloadFullReportBtn" href="#" class="btn-download" style="padding: 5px 10px;">
+                    &#x2B07; Download report
+                </a>
+            </div>
+            <div style="display: flex; gap: 20px;">
+                <p><strong>Total:</strong> <span id="stat-total">0</span></p>
+                <p><strong>Accepted:</strong> <span id="stat-accepted" style="color: green;">0</span></p>
+                <p><strong>Quarantined:</strong> <span id="stat-quarantined" style="color: red;">0</span></p>
+            </div>
+        </section>
+        <section style="border-color: green;">
+            <div class="flex-between">
+                <h3>Clean Records</h3>
+                <a id="downloadCleanReportBtn" href="#" class="btn-download" style="padding: 5px 10px;">
+                    &#x2B07; Download clean records
+                </a>
+            </div>
+            <table id="cleanRecordsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+        <section style="border-color: red;">
+            <h3>Quarantine Log</h3>
+            <table id="quarantineTable">
+                <thead>
+                    <tr>
+                        <th>Row ID</th>
+                        <th>Reason</th>
+                        <th>JSON Data</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>                    
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+<script>
+document.getElementById("uploadForm").onsubmit = async (e) => {
+    e.preventDefault();
+    document.getElementById("loader").classList.remove("hidden");
+    
+    const fileInput = document.getElementById("fileInput");
+    const formData = new FormData();
+
+    // Loop through all selected files and append each one
+    for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append("file", fileInput.files[i]);
+    }
+    
+    try {
+        const response = await fetch("/api/upload/", { 
+            method: "POST",
+            headers: { "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value },
+            body: formData 
+        });
+        
+        // Inside your onsubmit handler:
+        const result = await response.json();
+
+        if (response.ok) {
+            result.results.forEach(res => {
+                if (res.success) {
+                    // Add to table
+                    const rep = res.report;
+                    const statusClass = (rep.status === "COMPLETED") ? "success" : "danger";
+                    
+                    document.getElementById("historyBody").insertAdjacentHTML("afterbegin", `
+                        <tr>
+                            <td>${rep.upload_id}</td>
+                            <td>${rep.file_name}</td>
+                            <td><span class="badge ${statusClass}">${rep.status}</span></td>
+                            <td>
+                                <button onclick="loadUploadContext('${rep.upload_id}', '${rep.file_name}')">
+                                    Examine Details
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                } else {
+                    alert(`Error processing ${res.file}: ${res.error}`);
+                }
+            });
+        }
+        
+    } catch (err) {
+        alert("Upload failed. Check console for details.");
+        console.error(err);
+    } finally {
+        document.getElementById("loader").classList.add("hidden");
+    }
+};
+
+
+function renderCleanTable(data) {
+    const tbody = document.querySelector("#cleanRecordsTable tbody");
+    tbody.innerHTML = data.map(r => `
+        <tr>
+            <td>
+                <div>
+                    <button class="btn-delete" onclick="deleteRecord('cleaned', '${r.clean_record_id}')" title="Delete">
+                    &times;</button>
+                    <span>${r.clean_record_id}</span>
+                </div>
+            </td>
+            <td><pre>${JSON.stringify(r.data, null, 2)}</pre></td>
+        </tr>`).join("");
+}
+
+function renderQuarantineTable(data) {
+    const tbody = document.querySelector("#quarantineTable tbody");
+    
+    tbody.innerHTML = data.map(r => `
+        <tr>
+            <td>
+                <button class="btn-delete" onclick="deleteRecord('quarantine', '${r.quarantine_record_id}')">&times;</button>
+                <span>${r.quarantine_record_id}</span>
+            </td>
+            <td>
+                <span class="badge danger">${r.reason_code}</span>
+                <div style="font-size: 0.85em; color: #555; margin-top: 4px;">
+                    ${r.error_details || "No details provided"}
+                </div>
+            </td>
+            <td><textarea id="json-edit-${r.quarantine_record_id}">${JSON.stringify(r.raw_data)}</textarea></td>
+            <td>
+                <button onclick="resubmitRow('${r.quarantine_record_id}')" style="margin-bottom: 5px;">Resubmit</button>
+            </td>
+        </tr>`).join('')
+}
+
+async function loadUploadContext(id, file_name) {
+    // 1. Fix the ID variable reference
+    document.getElementById("workspaceContainer").classList.remove("hidden");
+    document.getElementById("activeTargetName").innerText = `#${id} - ${file_name}`;
+    
+    const downloadCleanReportBtn = document.getElementById("downloadCleanReportBtn");
+    downloadCleanReportBtn.href = `/download-cleaned-records/${id}/`;
+    
+    const downloadFullReportBtn = document.getElementById("downloadFullReportBtn");
+    downloadFullReportBtn.href = `/download-full-report/${id}/`;
+
+    const response = await fetch(`/api/report/${id}/`);
+
+    if (!response.ok) {
+        console.error("Server responded with error:", response.status);
+        return;
+    }
+    
+    const result = await response.json();
+
+    const rep = result.report;
+
+    // Update Summary Stats
+    if (rep.metrics) {
+        document.getElementById("stat-total").innerText = rep.metrics.total_rows_received;
+        document.getElementById("stat-accepted").innerText = rep.metrics.rows_accepted;
+        document.getElementById("stat-quarantined").innerText = rep.metrics.rows_quarantined;
+    }
+    
+    // 4. Render the data
+    renderCleanTable(result.report.clean_records || []);
+    renderQuarantineTable(result.report.quarantine_records || []);
+}
+
+async function resubmitRow(row_id) {
+    const textarea = document.getElementById(`json-edit-${row_id}`);
+    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+    let correctedPayload;
+    try {
+        correctedPayload = JSON.parse(textarea.value);
+    } catch (e) {
+        alert("Invalid JSON format in the textarea. Please fix it and try again.");
+        return;
+    }
+
+    const response = await fetch(`/api/quarantine/${row_id}/`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({ corrected_payload: correctedPayload })
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+        const currentUploadId = document.getElementById("activeTargetName").innerText.split(" ")[0].replace("#", "");
+        loadUploadContext(currentUploadId, "Current File"); 
+    } else {
+        console.log("Full Error Result:", result);
+        // This catches the 422 Unprocessable Entity (Revalidation Failed)
+        alert(`Failed: ${JSON.stringify(result.error.details || {})}`);
+    }
+}
+
+async function deleteRecord(type, id) {
+    if (!confirm("Permanently delete this row?")) return;
+
+    const response = await fetch(`/api/delete/${type}/${id}/`, {
+        method: "DELETE",
+        headers: { "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value }
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+        alert("Success: Row deleted!");
+        const currentUploadId = document.getElementById("activeTargetName").innerText.split(" ")[0].replace("#", "");
+        loadUploadContext(currentUploadId, "Current File"); 
+    } else {
+        // This catches the 422 Unprocessable Entity (Revalidation Failed)
+        alert(`Failed: ${JSON.stringify(result.error.details || {})}`);
+    }
+}
+
+function closeWorkspace() { document.getElementById("workspaceContainer").classList.add("hidden"); }
+</script>
+
+</body>
+</html>

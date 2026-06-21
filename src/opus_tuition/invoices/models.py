@@ -3,9 +3,9 @@ from django.db import models
 # Create your models here.
 class Invoice(models.Model):
     class PaymentStatus(models.TextChoices):
-        PAID = "paid", "Paid"
-        PENDING = "pending", "Pending"
-        OVERDUE = "overdue", "Overdue"
+        PAID = "Paid", "Paid"
+        PENDING = "Pending", "Pending"
+        OVERDUE = "Overdue", "Overdue"
 
     invoice_id = models.CharField(max_length=100, primary_key=True)
     invoice_date = models.DateField()
@@ -17,5 +17,4 @@ class Invoice(models.Model):
     )
     payment_date = models.DateField(blank=True, null=True)
     payment_notes = models.TextField(blank=True, null=True)
-    tutor = models.ForeignKey("accounts.Tutor", on_delete=models.CASCADE)
-    student = models.ForeignKey("accounts.Student", on_delete=models.CASCADE)
+    assignment = models.ForeignKey("assignments.Assignment", on_delete=models.CASCADE)

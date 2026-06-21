@@ -2,18 +2,22 @@ from django.db import models
 
 # Create your models here.
 class Level(models.Model):
-    level_id = models.AutoField(primary_key=True)
     level_name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.level_name
+
 class Subject(models.Model):
-    subject_id = models.AutoField(primary_key=True)
     subject_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.subject_name
 
 class Assignment(models.Model):
     class AssignmentStatus(models.TextChoices):
-        ACTIVE = "active", "Active"
-        PENDING = "pending", "Pending"
-        CANCELLED = "cancelled", "Cancelled"
+        ACTIVE = "Active", "Active"
+        INACTIVE = "Inactive", "Inactive"
+        PENDING = "Pending", "Pending"
 
     assignment_id = models.CharField(max_length=100, primary_key=True)
     hourly_rate = models.DecimalField(max_digits=19, decimal_places=4)
