@@ -68,7 +68,7 @@ class QuarantineRecord(models.Model):
     error_details = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_resolved = models.BooleanField(default=False)
-    resolved_at = models.DateTimeField(null=True, blank=True)
+    resolved_at = models.DateTimeField(null=True, blank=True, auto_now=True)
 
     class Meta:
         ordering = ["row_index"]
