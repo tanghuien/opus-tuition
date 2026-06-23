@@ -12,7 +12,7 @@ def get_upload_path(instance, filename):
     return f"uploads/uploaded_files/{folder_path}/{name}{extension}"
 
 class Upload(models.Model):
-    STATUS_CHOICES = [
+    UPLOAD_STATUS_CHOICES = [
         ("PENDING", "Pending"),
         ("PROCESSING", "Processing"),
         ("COMPLETED", "Completed"),
@@ -29,7 +29,7 @@ class Upload(models.Model):
 
     upload_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     raw_file = models.FileField(upload_to=get_upload_path)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
+    upload_status = models.CharField(max_length=20, choices=UPLOAD_STATUS_CHOICES, default="PENDING")
     file_category = models.CharField(max_length=20, choices=FILE_CATEGORY_CHOICES, default="UNKNOWN")
     
     total_rows = models.IntegerField(default=0)
@@ -44,7 +44,7 @@ class Upload(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"Upload {self.upload_id} - {self.status}"
+        return f"Upload {self.upload_id} - {self.upload_status}"
 
 class CleanRecord(models.Model):
     clean_record_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

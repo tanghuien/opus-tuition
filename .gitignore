@@ -5,15 +5,11 @@
 __pycache__/
 *.pyc
 
-# --- Database ---
-db.sqlite3
-
 # --- IDE and Editor ---
 .idea/
 .vscode/
 
 # --- Project Data ---
-src/opus_tuition/uploads/data/raw/
 src/opus_tuition/uploads/data/processed/
 src/opus_tuition/uploads/data/quarantine/
 src/opus_tuition/uploads/data/report/

@@ -1,7 +1,5 @@
 # Define the command
 start:
-	@echo "--- Migrating database ---"
-	python3 manage.py migrate
 	@echo "--- Starting server ---"
 	python3 manage.py runserver
 
@@ -14,3 +12,5 @@ process:
 	@echo "--- Pipeline finished ---"
 
 .PHONY: process
+
+

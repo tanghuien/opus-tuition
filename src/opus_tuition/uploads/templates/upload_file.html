@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>OPUS Tuition</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'upload_file.css' %}">
+    <link rel="stylesheet" href="{% static 'css/upload_file.css' %}">
 </head>
 <body>
 
@@ -37,8 +37,8 @@
                     <td>{{ upload.upload_id }}</td>
                     <td>{{ upload.raw_file.name }}</td>
                     <td>
-                        <span class="badge {% if upload.status == 'COMPLETED' %}success{% else %}danger{% endif %}">
-                            {{ upload.status }}
+                        <span class="badge {% if upload.upload_status == 'COMPLETED' %}success{% else %}danger{% endif %}">
+                            {{ upload.upload_status }}
                         </span>
                     </td>
                     <td>
@@ -131,190 +131,6 @@
             </table>
         </section>
     </div>
-
-<script>
-document.getElementById("uploadForm").onsubmit = async (e) => {
-    e.preventDefault();
-    document.getElementById("loader").classList.remove("hidden");
-    
-    const fileInput = document.getElementById("fileInput");
-    const formData = new FormData();
-
-    // Loop through all selected files and append each one
-    for (let i = 0; i < fileInput.files.length; i++) {
-        formData.append("file", fileInput.files[i]);
-    }
-    
-    try {
-        const response = await fetch("/api/upload/", { 
-            method: "POST",
-            headers: { "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value },
-            body: formData 
-        });
-        
-        // Inside your onsubmit handler:
-        const result = await response.json();
-
-        if (response.ok) {
-            result.results.forEach(res => {
-                if (res.success) {
-                    // Add to table
-                    const rep = res.report;
-                    const statusClass = (rep.status === "COMPLETED") ? "success" : "danger";
-                    
-                    document.getElementById("historyBody").insertAdjacentHTML("afterbegin", `
-                        <tr>
-                            <td>${rep.upload_id}</td>
-                            <td>${rep.file_name}</td>
-                            <td><span class="badge ${statusClass}">${rep.status}</span></td>
-                            <td>
-                                <button onclick="loadUploadContext('${rep.upload_id}', '${rep.file_name}')">
-                                    Examine Details
-                                </button>
-                            </td>
-                        </tr>
-                    `);
-                } else {
-                    alert(`Error processing ${res.file}: ${res.error}`);
-                }
-            });
-        }
-        
-    } catch (err) {
-        alert("Upload failed. Check console for details.");
-        console.error(err);
-    } finally {
-        document.getElementById("loader").classList.add("hidden");
-    }
-};
-
-
-function renderCleanTable(data) {
-    const tbody = document.querySelector("#cleanRecordsTable tbody");
-    tbody.innerHTML = data.map(r => `
-        <tr>
-            <td>
-                <div>
-                    <button class="btn-delete" onclick="deleteRecord('cleaned', '${r.clean_record_id}')" title="Delete">
-                    &times;</button>
-                    <span>${r.clean_record_id}</span>
-                </div>
-            </td>
-            <td><pre>${JSON.stringify(r.data, null, 2)}</pre></td>
-        </tr>`).join("");
-}
-
-function renderQuarantineTable(data) {
-    const tbody = document.querySelector("#quarantineTable tbody");
-    
-    tbody.innerHTML = data.map(r => `
-        <tr>
-            <td>
-                <button class="btn-delete" onclick="deleteRecord('quarantine', '${r.quarantine_record_id}')">&times;</button>
-                <span>${r.quarantine_record_id}</span>
-            </td>
-            <td>
-                <span class="badge danger">${r.reason_code}</span>
-                <div style="font-size: 0.85em; color: #555; margin-top: 4px;">
-                    ${r.error_details || "No details provided"}
-                </div>
-            </td>
-            <td><textarea id="json-edit-${r.quarantine_record_id}">${JSON.stringify(r.raw_data)}</textarea></td>
-            <td>
-                <button onclick="resubmitRow('${r.quarantine_record_id}')" style="margin-bottom: 5px;">Resubmit</button>
-            </td>
-        </tr>`).join('')
-}
-
-async function loadUploadContext(id, file_name) {
-    // 1. Fix the ID variable reference
-    document.getElementById("workspaceContainer").classList.remove("hidden");
-    document.getElementById("activeTargetName").innerText = `#${id} - ${file_name}`;
-    
-    const downloadCleanReportBtn = document.getElementById("downloadCleanReportBtn");
-    downloadCleanReportBtn.href = `/download-cleaned-records/${id}/`;
-    
-    const downloadFullReportBtn = document.getElementById("downloadFullReportBtn");
-    downloadFullReportBtn.href = `/download-full-report/${id}/`;
-
-    const response = await fetch(`/api/report/${id}/`);
-
-    if (!response.ok) {
-        console.error("Server responded with error:", response.status);
-        return;
-    }
-    
-    const result = await response.json();
-
-    const rep = result.report;
-
-    // Update Summary Stats
-    if (rep.metrics) {
-        document.getElementById("stat-total").innerText = rep.metrics.total_rows_received;
-        document.getElementById("stat-accepted").innerText = rep.metrics.rows_accepted;
-        document.getElementById("stat-quarantined").innerText = rep.metrics.rows_quarantined;
-    }
-    
-    // 4. Render the data
-    renderCleanTable(result.report.clean_records || []);
-    renderQuarantineTable(result.report.quarantine_records || []);
-}
-
-async function resubmitRow(row_id) {
-    const textarea = document.getElementById(`json-edit-${row_id}`);
-    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-    
-    let correctedPayload;
-    try {
-        correctedPayload = JSON.parse(textarea.value);
-    } catch (e) {
-        alert("Invalid JSON format in the textarea. Please fix it and try again.");
-        return;
-    }
-
-    const response = await fetch(`/api/quarantine/${row_id}/`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken
-        },
-        body: JSON.stringify({ corrected_payload: correctedPayload })
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-        const currentUploadId = document.getElementById("activeTargetName").innerText.split(" ")[0].replace("#", "");
-        loadUploadContext(currentUploadId, "Current File"); 
-    } else {
-        console.log("Full Error Result:", result);
-        // This catches the 422 Unprocessable Entity (Revalidation Failed)
-        alert(`Failed: ${JSON.stringify(result.error.details || {})}`);
-    }
-}
-
-async function deleteRecord(type, id) {
-    if (!confirm("Permanently delete this row?")) return;
-
-    const response = await fetch(`/api/delete/${type}/${id}/`, {
-        method: "DELETE",
-        headers: { "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value }
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-        alert("Success: Row deleted!");
-        const currentUploadId = document.getElementById("activeTargetName").innerText.split(" ")[0].replace("#", "");
-        loadUploadContext(currentUploadId, "Current File"); 
-    } else {
-        // This catches the 422 Unprocessable Entity (Revalidation Failed)
-        alert(`Failed: ${JSON.stringify(result.error.details || {})}`);
-    }
-}
-
-function closeWorkspace() { document.getElementById("workspaceContainer").classList.add("hidden"); }
-</script>
-
 </body>
+<script src="{% static 'js/upload_file.js' %}" defer></script>
 </html>

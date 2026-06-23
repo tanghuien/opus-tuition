@@ -16,8 +16,9 @@ from .utils import sanitize_for_json
 
 class PipelineDataTests(TestCase):
     def setUp(self):
+        # Create the upload object once so later all tests can use
         self.upload = Upload.objects.create(
-            status="PROCESSING",
+            upload_status="PROCESSING",
             total_rows=0
         )
 
@@ -26,7 +27,7 @@ class PipelineDataTests(TestCase):
         self.level, _ = Level.objects.get_or_create(level_name="Primary 1")
         self.subject, _ = Subject.objects.get_or_create(subject_name="Science")
         
-        # 2. Create the assignment once for all tests to use
+        # Update exisitng or create the assignment object so later all tests can use
         self.assignment, _ = Assignment.objects.update_or_create(
             assignment_id="ASG-111",
             hourly_rate=45.00,
@@ -230,9 +231,6 @@ class PipelineDataTests(TestCase):
 
     # N. Required Field Validation     
     def test_assignment_required_fields(self):
-        # 1. Setup: Create the required Assignment record
-        
-        # 2. Setup: Define payload mix
         valid_row = {
             "Assignment ID": self.assignment.assignment_id,
             "Tutor Name": "Mary Tan",
@@ -317,9 +315,6 @@ class PipelineDataTests(TestCase):
         self.assertEqual(quarantine.reason_code, "NULL_FIELD")
 
     def test_invoice_batch_required_fields(self):
-        # 1. Setup: Create the required Assignment record
-        
-        # 2. Setup: Define payload mix
         valid_row = {
             "Invoice ID": "INV-123",
             "Assignment ID": "TAS-123" ,

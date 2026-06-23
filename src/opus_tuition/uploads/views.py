@@ -24,31 +24,55 @@ from accounts.models import Tutor, Student
 from assignments.models import Level, Subject, Assignment
 from lesson_logs.models import LessonLog
 from invoices.models import Invoice
-from .utils import RowValidationError, validate_disk_file, validate_uploaded_file, get_engine_for_file, sanitize_for_json
+from .utils import RowValidationError, RowValidationCollectionError, sanitize_for_json
 
 logger = logging.getLogger("views.engine")
 
-def run_full_data_pipeline(upload, manual_path = None):
-    # Use the manual path is provided for pipeline auto 
-    # Else, use the file path uploaded
-    data_path = manual_path if manual_path else upload.raw_file.path
+def validate_uploaded_file(file_obj):
+    """
+    Validates an uploaded file object before processing.
+    Ensures the file exists, is within the size limit: 10MB, and has a valid Excel extension.
+    """
+
+    # Ensure file exists
+    if not file_obj:
+        return Response({"success": False, "error": {"code": "MISSING_FILE", "message": "No file found."}}, status=status.HTTP_400_BAD_REQUEST)
     
-    # Identify the engine used for the file format identified
-    engine = get_engine_for_file(data_path)
+    # Ensure file size to not exceeds 10MB
+    if file_obj.size > 10 * 1024 * 1024:
+        return Response({"success": False, "error": {"code": "FILE_TOO_LARGE", "message": "File exceeds 10MB."}}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+    
+    # Validate file extension
+    extension = os.path.splitext(file_obj.name)[1].lower()    
+    if extension not in [".xlsx", ".xls"]:
+        return Response({"success": False, "error": {"code": "INVALID_FILE_EXTENSION", "message": "Only Excel files are allowed."}}, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+    
+    return None
+
+def run_full_data_pipeline(upload, manual_path = None):
+    """
+    This function ensures the data uploaded went through header algorithmn, data processing, and saving data into database.
+    """
+
+
+    # Use the manual path that is provided from automated data processing 
+    # Else, use the file path uploaded on web
+    data_path = manual_path if manual_path else upload.raw_file.path
 
     try:
-        # 1. ATTEMPT HEADER DISCOVERY
+        # An attempt to find header
         # Using existing find_highlighted_header logic
         sheet_name, rows_to_skip, header_found = find_highlighted_header(data_path)
 
         if header_found:
-            # Case A: Header found via highlighting
+            # Case A: Header found via highlighting using visual formatting clues 
+            # such as bolded text, coloured background, unique column values 
             logger.info(f"Header discovered via highlighting (Sheet: {sheet_name}, Skip: {rows_to_skip})")
-            df = pd.read_excel(data_path, sheet_name=sheet_name, skiprows=rows_to_skip, engine=engine)
+            df = pd.read_excel(data_path, sheet_name=sheet_name, skiprows=rows_to_skip)
         else:
             # Case B: No header found, apply heuristic mapping to infer column structure
             logger.warning(f"No header found in {data_path}; falling back to heuristic column structure inference.")
-            df = pd.read_excel(data_path, sheet_name=sheet_name, header=None, engine=engine)
+            df = pd.read_excel(data_path, sheet_name=sheet_name, header=None)
         
         max_rows_to_check = min(30, len(df))
         df, inferred_category = identify_and_map_columns(df, max_rows_to_check)
@@ -67,17 +91,21 @@ def run_full_data_pipeline(upload, manual_path = None):
         stored_content = {}
         accepted_count, quarantined_count = 0, 0
 
-        all_valid_rows = []
-        error_report = []
-
+        # loop through every single line in a table (DataFrame) one by one.
         for index, row in df.iterrows():
+            # Make each row into a dictionary
             row_dict = row.to_dict()
-            human_row_idx = index + 1
-            sanitized_row = {str(k): (str(v) if pd.notnull(v) else None) for k, v in row_dict.items()}
+            # Starts from the first line after header row
+            first_data_row_index = index + 1
+            
+            # Force column header into string
+            # If there is data in cell, converts into string.
+            # If the data is empty, converts into None.
+            sanitized_row = {str(column_header): (str(cell_value) if pd.notnull(cell_value) else None) for column_header, cell_value in row_dict.items()}
             
             try:
                 with transaction.atomic():
-                    cleaned_payload, file_category = validate_and_clean_row_dict(row_dict, inferred_category, stored_id, stored_content, human_row_idx)
+                    cleaned_payload, file_category = validate_and_clean_row_dict(row_dict, inferred_category, stored_id, stored_content, first_data_row_index)
 
                     safe_payload = sanitize_for_json(cleaned_payload)
 
@@ -100,12 +128,12 @@ def run_full_data_pipeline(upload, manual_path = None):
                             }
                         )
                     elif file_category in ["LESSON_LOG", "INVOICE"]:
-                        # Standardize the lookup so both types behave the same way
+                        # Ensure the foreign key dependency is available
                         try:
                             assignment = Assignment.objects.get(assignment_id=safe_payload["Assignment ID"])
                         except Assignment.DoesNotExist:
                             raise RowValidationError(
-                                code="MISSING_RELATIONSHIP",
+                                code="REFERENCE_NOT_FOUND",
                                 message=f"Assignment ID '{safe_payload['Assignment ID']}' not found. File could not be saved to database."
                             )
                             
@@ -121,7 +149,7 @@ def run_full_data_pipeline(upload, manual_path = None):
                                     "assignment": assignment
                                 }
                             )                        
-                        else: # INVOICE
+                        else: 
                             invoice, created = Invoice.objects.update_or_create(
                                 invoice_id=safe_payload["Invoice ID"],
                                 defaults={
@@ -136,57 +164,89 @@ def run_full_data_pipeline(upload, manual_path = None):
                     
                     CleanRecord.objects.create(
                         upload=upload,
-                        row_index=human_row_idx,
-                        clean_payload=safe_payload # Use the safe version
+                        row_index=first_data_row_index,
+                        clean_payload=safe_payload 
                     )
                     accepted_count += 1
             
             except RowValidationError as rve:
-                safe_payload = sanitize_for_json(row_dict) # USE YOUR NEW FUNCTION
-
+                # Handle single, critical validation stops
+                safe_payload = sanitize_for_json(row_dict)
                 QuarantineRecord.objects.create(
                     upload=upload,
-                    row_index=human_row_idx,
+                    row_index=first_data_row_index,
                     reason_code=rve.code,
                     error_details=rve.message,
                     raw_payload=safe_payload
                 )
                 quarantined_count += 1
 
+            except RowValidationCollectionError as rvce:
+                # Handle multiple non-critical errors found in one row
+                safe_payload = sanitize_for_json(row_dict)
+                            
+                for error in rvce.errors:
+                    QuarantineRecord.objects.create(
+                        upload=upload,
+                        row_index=first_data_row_index,
+                        reason_code=error.get("code"),
+                        error_details=error.get("message"),
+                        raw_payload=safe_payload
+                    )
+                quarantined_count += 1
+
         upload.accepted_rows, upload.quarantined_rows = accepted_count, quarantined_count
-        upload.status = "COMPLETED" if quarantined_count == 0 else "QUARANTINED"
+        upload.upload_status = "COMPLETED" if quarantined_count == 0 else "QUARANTINED"
         upload.save()
         
     except Exception as e:
-        upload.status = "FAILED"
+        upload.upload_status = "FAILED"
         upload.system_error_trace = str(e)
         upload.save()
-        print(f"Caught by mistake: {e}")
+        logger.exception(f"Caught by mistake: {e}")
         raise e
 
-
+# ==========================================
+# a. POST /api/upload/
+# ==========================================
 class FileUploadAPIView(APIView):
+    """
+    Endpoint to receive a file, runs the full pipeline, returns a processing report
+    """
+    
+    # Accept file
     parser_classes = [MultiPartParser]
     serializer_class = UploadReportSerializer
 
-
     def post(self, request):
+        # Extract all uploaded files from the request
         files = request.FILES.getlist("file")
+
         if not files:
+            logger.error("No files uploaded.")
             return Response({"error": "No files uploaded."}, status=400)
         
         results = []
-        
-        for file_obj in files:
-            # 1. Validation
-            if validate_uploaded_file(file_obj):
-                results.append({"success": False, "file": file_obj.name, "error": "Validation failed"})
-                continue
+        logger.info(f"Processing {len(files)} file(s).")
 
-            # 2. Database Record
-            upload = Upload.objects.create(raw_file=file_obj, status="PROCESSING")
-            
-            # 3. Pipeline
+        for file_obj in files:
+            # Validate all file to check data size, file format etc        
+            error_response = validate_uploaded_file(file_obj)
+
+            if error_response is not None:
+                logger.error(f"Validation failed for file: {file_obj.name}")
+                
+                # Extract the actual payload from the Response object
+                results.append({
+                    "file": file_obj.name,
+                    **error_response.data  
+                })
+                continue            
+
+            upload = Upload.objects.create(raw_file=file_obj, upload_status="PROCESSING")
+            logger.info(f"Upload record created: ID {upload.upload_id} for file {file_obj.name}")
+
+            # Finally, run data pipeline
             try:
                 run_full_data_pipeline(upload)
                 upload.refresh_from_db()
@@ -194,28 +254,31 @@ class FileUploadAPIView(APIView):
                     "success": True,
                     "report": UploadReportSerializer(upload).data
                 })
+                logger.info(f"Successfully processed upload ID {upload.upload_id}")
             except Exception as e:
-                upload.status = "FAILED"
+                logger.exception(f"Pipeline failed for upload ID {upload.upload_id}: {str(e)}")
+                upload.upload_status = "FAILED"
                 upload.save()
                 results.append({"success": False, "file": file_obj.name, "error": str(e)})
                 
-        return Response({"results": results}, status=200)
-        
+        return Response({"results": results}, status=status.HTTP_200_OK)
+
 # ==========================================
-# B. GET /records (with filters)
+# b. GET /api/records/ 
 # ==========================================
 class RecordsAPIView(APIView):
     """
     Returns clean records with filtering capabilities.
     """
+    
     def get(self, request):
-       # 1. Capture parameters (default to None if not provided)
+       # Extract the given parameters
         upload_id = request.query_params.get("upload_id")
         start_date = request.query_params.get("start_date")
         end_date = request.query_params.get("end_date")
         file_category = request.query_params.get("file_category")
 
-        # 2. Base Query
+        # Fetch all clean records
         clean_records = CleanRecord.objects.select_related("upload").all()
 
         if upload_id:
@@ -227,8 +290,8 @@ class RecordsAPIView(APIView):
         if end_date:
             clean_records = clean_records.filter(created_at__date__lte=end_date)
 
-        # 4. Get the effective date range of the returned data for the report metadata
-        # If no filters were applied, this shows the full range of your data
+        # Get the effective date range of the returned data for the report metadata
+        # If no filters were applied, this shows the full range ofdata
         total_count = clean_records.count()
         date_range = clean_records.aggregate(start=Min("created_at"), end=Max("created_at"))
 
@@ -255,12 +318,16 @@ class RecordsAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
 # ==========================================
-# C. GET /quarantine
+# c. GET /api/quarantine/
 # ==========================================
-class QuarantineListAPIView(APIView):
+class QuarantineRecordsAPIView(APIView):
+    """
+    Endpoint to returns quarantined rows with structured reason codes and details
+    """
+
     def get(self, request):
         """Returns unresolved quarantined rows with structured reason codes."""
-        # Pull records that currently await manual operations corrections
+        # Fetch quarantined records that has yet resolved
         quarantine_records = QuarantineRecord.objects.filter(is_resolved=False)
         
         results = [
@@ -280,16 +347,28 @@ class QuarantineListAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
 # ==========================================
-# D. GET /report/:upload_id
+# d. GET /api/report/:upload_id/
 # ==========================================
 class UploadReportAPIView(APIView):
+    """"
+    Endpoint to retrieve the full processing results for a specific upload.
+    """
+
     def get(self, request, upload_id):
+        """
+        Fetches the processing report for a given upload_id.
+        
+        This view aggregates both "CleanRecord" (successful) and 
+        "QuarantineRecord" (failed/flagged) entries, providing the user with 
+        a complete audit trail and error feedback.
+        """
+
         try:            
             upload = Upload.objects.get(upload_id=upload_id)
             
-            # print(f"DEBUG: Checking database for Upload {upload_id}")
-            # print(f"DEBUG: Clean records count in DB: {upload.clean_records.count()}")
-            # print(f"DEBUG: Quarantined records count in DB: {upload.quarantine_records.filter(is_resolved=False).count()}")
+            logger.debug(f"Checking database for Upload {upload_id}")
+            logger.debug(f"Clean records count in DB: {upload.clean_records.count()}")
+            logger.debug(f"Quarantined records count in DB: {upload.quarantine_records.filter(is_resolved=False).count()}")
             
             return Response({
                 "success": True, 
@@ -298,40 +377,54 @@ class UploadReportAPIView(APIView):
         except Upload.DoesNotExist:
             return Response({
                 "success": False,
-                "error": {"code": "NOT_FOUND", "message": f"Upload token sequence tracking index '{upload_id}' is invalid.", "timestamp": timezone.now().isoformat()}
+                "error": {
+                    "code": "NOT_FOUND", 
+                    "message": f"Upload token sequence tracking index '{upload_id}' is invalid.", "timestamp": timezone.now().isoformat()}
             }, status=status.HTTP_404_NOT_FOUND)
 
 class DeleteRecordAPIView(APIView):
+    """"
+    Endpoint to delete a specific record.
+    """
+
     def delete(self, request, record_type, row_id):
+        model_map = {
+            "quarantine": QuarantineRecord,
+            "cleaned": CleanRecord
+        }
+        
+        target_model = model_map.get(record_type)
+        if not target_model:
+            return Response({"error": "Invalid record type"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            if record_type == "quarantine":
-                record = QuarantineRecord.objects.get(pk=row_id)
-            elif record_type == "cleaned":
-                record = CleanRecord.objects.get(pk=row_id)
-            else:
-                return Response({"error": "Invalid type"}, status=400)
-            
-            # CRITICAL: Force the delete and ensure it commits
+            record = target_model.objects.get(pk=row_id)
             record.delete()
-            
-            # Verify it is gone
-            return Response({"success": True}, status=200)
-        except Exception as e:
-            # Log the error so you can see it in your terminal
-            # print(f"DEBUG: Delete failed for {record_type} ID {row_id}: {str(e)}")
-            return Response({"success": False, "error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"success": True}, status=status.HTTP_200_OK)
+        except target_model.DoesNotExist:
+            return Response({"error": "Record not found"}, status=status.HTTP_404_NOT_FOUND)
 
 # ==========================================
-# E. PATCH /quarantine/:row_id
+# E. PATCH /api/quarantine/:row_id
 # ==========================================
 class QuarantineResolveAPIView(APIView):
-    parser_classes = [JSONParser]
+    """"
+    Endpoint to delete a specific record.
+    """
 
     def patch(self, request, row_id):
         try:
-            record = QuarantineRecord.objects.get(quarantine_record_id=row_id, is_resolved=False)
+            # Checks if quaratine records exists
+            record = QuarantineRecord.objects.get(quarantine_record_id=row_id)
         except QuarantineRecord.DoesNotExist:
-            return Response({"success": False, "error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+            # If it's not even in the database, log the error
+            logger.error(f"Deletion failed: Record {row_id} does not exist in DB.")
+            return Response({"success": False, "error": "Record already removed"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # If it exists, means is for delete purpose
+        if record.is_resolved:
+            logger.info(f"Record {row_id} found but already marked as resolved.")
+            return Response({"success": False, "error": "Record has already processed"}, status=status.HTTP_400_BAD_REQUEST)
             
         corrected_payload = request.data.get("corrected_payload") 
         if not corrected_payload:
@@ -345,9 +438,7 @@ class QuarantineResolveAPIView(APIView):
         config = criteria_map.get(record.upload.file_category, {})
         pk_key = config.get('pk')
         secondary_keys = config.get('secondary', [])
-
-        # 2. PRIME THE SETS FROM DATABASE
-        # This tells the validator what is already 'taken'
+  
         existing_records = CleanRecord.objects.filter(upload=record.upload)
 
         stored_id = {
@@ -362,7 +453,7 @@ class QuarantineResolveAPIView(APIView):
         }
 
         try:
-            # 1. Re-validate the row (Unpack the tuple returned by the function)
+            # Re-validate the row
             cleaned_data, _ = validate_and_clean_row_dict(
                 corrected_payload, 
                 record.upload.file_category, 
@@ -371,8 +462,7 @@ class QuarantineResolveAPIView(APIView):
                 record.row_index
             )
 
-            # 2. NEW: Explicitly verify the relationship exists 
-            # (If the record is a Lesson Log or Invoice)
+            # Verify the relationship exists 
             if record.upload.file_category in ["LESSON_LOG", "INVOICE"]:
                 assignment_id = cleaned_data.get("Assignment ID")
                 try:
@@ -381,14 +471,18 @@ class QuarantineResolveAPIView(APIView):
                     logger.warning(f"Assignment with ID {assignment_id} not found.")
                     return Response({
                         "success": False,
-                        "error": {"code": "NOT_FOUND", "message": f"Assignment with ID {assignment_id} not found."}
+                        "error": {
+                            "code": "REVALIDATION_FAILED",                             
+                            "details": {
+                                "reason": "REFERENCE_NOT_FOUND", 
+                                "message": f"Assignment with ID {assignment_id} not found."
+                            }}
                     }, status=status.HTTP_404_NOT_FOUND)
 
-            # 2. Sanitize using your recursive function to handle Decimals/Tuples
-            # This replaces the crashing json.loads(json.dumps(...))
+            # Sanitize using your recursive function to handled decimals/, lists, and tuples etc
             sanitized_payload = sanitize_for_json(cleaned_data)
 
-            # 3. Perform atomic transition
+            # Perform atomic transition
             with transaction.atomic():
                 CleanRecord.objects.create(
                     upload=record.upload,
@@ -405,22 +499,50 @@ class QuarantineResolveAPIView(APIView):
                 if upload.quarantined_rows > 0:
                     upload.quarantined_rows = F('quarantined_rows') - 1
                 upload.save()
+
+                # Clean up the errors: Delete the quarantine row
+                QuarantineRecord.objects.filter(
+                    upload=upload, 
+                    row_index=record.row_index
+                ).delete()
             
             return Response({"success": True, "message": "Successfully migrated to clean records."}, status=status.HTTP_200_OK)
             
         except RowValidationError as rve:
             return Response({
                 "success": False,
-                "error": {"code": "REVALIDATION_FAILED", "details": {"reason": rve.code, "msg": rve.message}}
+                "error": {
+                    "code": "REVALIDATION_FAILED", 
+                    "details": {
+                        "reason": rve.code, 
+                        "message": rve.message
+                    }
+                }
             }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        
+        except RowValidationCollectionError as rvce:
+            return Response({
+                "success": False,
+                "errors": list(rvce.errors) # Ensure this is a list for JSON serialization
+            }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        
+        except Exception as e:
+            return Response({
+                "success": False, 
+                "error": "An internal system error occurred during revalidation. Error: {e}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        
 # ==========================================
 # F. GET /health
 # ==========================================
 class SystemHealthAPIView(APIView):
+    """
+    Endpoint to view the system and database status
+    """
     def get(self, request):
         try:
-            # Check database query engine latency pipelines
+            # Testing if the database can execute the command
             with connection.cursor() as cursor:
                 cursor.execute("SELECT 1")
             return Response({
@@ -438,20 +560,21 @@ class SystemHealthAPIView(APIView):
                 "error": {"code": "DATABASE_DOWN", "message": "Database pipeline structural connections dropped.", "details": str(e)}
             }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-
-
 def upload_page(request):
-    # 1. Fetch only the uploads for the table
-    # We don't need all clean/quarantined records here, 
-    # as the API call will fetch them individually.
+    """"
+    Fetch only the uploads to display on the table
+    Access to the UI page to upload file, view processing report and download records.
+    """
+
+    # Order is by the date the file upload was created
     upload_list = Upload.objects.all().order_by("-created_at")
     
-    # 2. Paginate: 5 items per page
+    # Display 5 items per page
     paginator = Paginator(upload_list, 5)
     page_number = request.GET.get('page')
     uploads = paginator.get_page(page_number)
     
-    # 3. Pass only the paginated uploads to the context
+    # Pass only the paginated uploads to the context
     context = {
         "uploads": uploads,
     }
@@ -459,23 +582,26 @@ def upload_page(request):
     return render(request, "upload_file.html", context)
 
 def download_cleaned_records(request, upload_id):
-    # 1. Fetch the payloads from the database
-    # .values_list extracts just the JSON data, which is faster
-    payloads = CleanRecord.objects.filter(upload_id=upload_id).values_list("clean_payload", flat=True)
+    """
+    Endpoint for downloading clean records only.
+    """
+
+    # Fetch the clean payloads from the database
+    clean_payloads = CleanRecord.objects.filter(upload_id=upload_id).values_list("clean_payload", flat=True)
     
-    if not payloads:
-        return HttpResponse("No records found to download.", status=404)
+    if not clean_payloads:
+        return HttpResponse("No records found to download.", status=status.HTTP_404_NOT_FOUND)
         
-    # 2. Convert to DataFrame
-    df = pd.DataFrame(list(payloads))
+    # Convert to DataFrame
+    df = pd.DataFrame(list(clean_payloads))
     
-    # 3. Pass to your existing styling function
+    # Create buffer
     buffer = generate_styled_excel_in_memory(df, sheet_name="Report")
     
     if buffer is None:
-        return HttpResponse("Report generation failed.", status=500)
+        return Response("Report generation failed.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    # 4. Stream to browser
+    # Send data from server to web browser
     return FileResponse(
         buffer, 
         as_attachment=True, 
@@ -483,38 +609,41 @@ def download_cleaned_records(request, upload_id):
     )
 
 def download_full_report(request, upload_id):
-    # 1. Fetch Clean
+    """
+    Endpoint for downloading full processing report including reason code and error details.
+    """
+
+    # Fetch clean records
     clean_records = CleanRecord.objects.filter(upload_id=upload_id)
     # Using list comprehension ensures we capture the row_index for sorting
-    data_clean = [{"row_index": r.row_index, **r.clean_payload, "Reason Code": "", "Error Details": ""} for r in clean_records]
+    data_clean = [{"Row Index": r.row_index, "Reason Code": "", "Error Details": "", **r.clean_payload} for r in clean_records]
     df_clean = pd.DataFrame(data_clean)
 
-    # 2. Fetch Quarantined
-    quar_records = QuarantineRecord.objects.filter(upload_id=upload_id)
-    data_quar = [{"row_index": r.row_index, **r.raw_payload, "Reason Code": r.reason_code, "Error Details": r.error_details} for r in quar_records]
-    df_quar = pd.DataFrame(data_quar)
+    # Fetch quarantined records
+    quarantine_records = QuarantineRecord.objects.filter(upload_id=upload_id)
+    data_quarantine = [{"Row Index": r.row_index, "Reason Code": r.reason_code, "Error Details": r.error_details, **r.raw_payload} for r in quarantine_records]
+    df_quarantine = pd.DataFrame(data_quarantine)
 
-    # 3. Combine and Sort
-    # concat handles mismatched columns automatically
-    df_combined = pd.concat([df_clean, df_quar], ignore_index=True)
+    # Concat both clean records and quarantine records
+    df_combined = pd.concat([df_clean, df_quarantine], ignore_index=True)
     
     upload_obj = get_object_or_404(Upload, pk=upload_id)
+    
     # Extract only the filename from the path (e.g., "uploads/2026/data.csv" -> "data.csv")
     base_name = os.path.basename(upload_obj.raw_file.name)
     
-    # Prepend "Report_" to the name
+    # Determines the final filename
     final_file_name = f"report_{base_name}"
 
     # Sort by the row_index to restore the original file sequence
     if not df_combined.empty:
-        df_combined = df_combined.sort_values(by="row_index")
-        # Drop the helper column if you don"t want it in the final file
-        df_combined = df_combined.drop(columns=["row_index"])
+        df_combined = df_combined.sort_values(by="Row Index")
     
     # Fill NaN values with empty strings
     df_combined = df_combined.fillna("")
 
-    # 4. Generate
+    # 4. Generate report
     buffer = generate_styled_excel_in_memory(df_combined, sheet_name="Full Report")
+
     return FileResponse(buffer, as_attachment=True, filename=f"{final_file_name}")
 

@@ -5,8 +5,8 @@ from .models import Upload, CleanRecord, QuarantineRecord
 
 @admin.register(Upload)
 class UploadAdmin(admin.ModelAdmin):
-    list_display = ("upload_id", "raw_file", "file_category", "status", "accepted_rows", "quarantined_rows", "created_at", "updated_at","system_error_trace")
-    list_filter = ("status", "file_category")
+    list_display = ("upload_id", "raw_file", "file_category", "upload_status", "accepted_rows", "quarantined_rows", "created_at", "updated_at","system_error_trace")
+    list_filter = ("upload_status", "file_category")
     readonly_fields = ("upload_id", "created_at", "updated_at", "system_error_trace")
 
 @admin.register(CleanRecord)
