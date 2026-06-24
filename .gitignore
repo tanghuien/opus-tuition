@@ -10,6 +10,6 @@ __pycache__/
 .vscode/
 
 # --- Project Data ---
+src/opus_tuition/uploads/data/processing/
 src/opus_tuition/uploads/data/quarantine/
-src/opus_tuition/uploads/data/report/
 src/opus_tuition/uploads/uploaded_files

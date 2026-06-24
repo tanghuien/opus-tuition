@@ -7,7 +7,7 @@ start:
 
 
 process:
-	@echo "--- Starting automated file processing ---"
+	@echo "--- Starting automated data processing ---"
 	python3 run_automated_data_processing.py
 	@echo "--- Pipeline finished ---"
 
