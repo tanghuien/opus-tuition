@@ -40,11 +40,6 @@ def apply_row_standardisation(row):
     if isinstance(payment_status, str) and payment_status.lower().endswith("mc"):
         row["Attendance Status"] = "Absent-MC"
 
-    # Duration (Hours) Standardisation
-    duration = row.get("Duration (Hours)")
-    if duration in [None, ""] or (isinstance(duration, float) and pd.isna(duration)):
-        row["Duration (Hours)"] = 1.0
-        
     return row
 
 def parse_single_date(raw_val):
@@ -173,14 +168,24 @@ def validate_and_clean_row_dict(row_dict, file_category, stored_id, stored_conte
             # This will correctly overwrite "150 SGD" with a Decimal(150.0000)
             val= row[col]
 
+            # Checks for non-numeric value
             if isinstance(val, str) and re.match(r'^[A-Za-z]+$', val.strip()):
                 errors.append({
                     "code":"INVALID_VALUE",
                     "message":f"Row {row_index} has an invalid non-numeric value in '{col}': '{val}'."
                 })
 
+            # Checks for missing/null
+            elif val is None or val ==0:
+                errors.append({
+                    "code": "ZERO_OR_NULL_VALUE",
+                    "message": f"Row {row_index} has an invalid zero or empty value in '{col}'."
+                })
+
             # If it's not alphabetic, proceed to parse and round
             row[col] = parse_and_round_decimal(val, places=places)
+
+            
 
     # 7. Identify missing fields
     FIELD_CONFIG = {
