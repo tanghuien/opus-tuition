@@ -2,7 +2,7 @@ Ensure [pip3](https://pypi.org/project/pip/) and [python3](https://www.python.or
 <br>
 1. Open the terminal
 2. Download the project folder from [github](https://github.com/tanghuien/opus-tuition) then unzip the downloaded folder
-3. Drag the unzipped folder to the terminal 
+3. Type "<b>cd</b>" and drag the unzipped folder to the terminal 
 4. Navigate to source code: "<b>cd src/opus_tuition</b>"
 5. Install virtual environment: "<b>python3 -m venv myvenv</b>"
 6. Activate virtual environment: "<b>source ./myvenv/bin/activate</b>"
