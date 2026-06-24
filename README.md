@@ -7,8 +7,9 @@ Ensure [pip3](https://pypi.org/project/pip/) and [python3](https://www.python.or
 5. Install virtual environment: "<b>python3 -m venv myvenv</b>"
 6. Activate virtual environment: "<b>source ./myvenv/bin/activate</b>"
 7. Install the packages: "<b>pip install -r requirements.txt</b>"
-8. Aautomate the pipeline: "<b>make process</b>"
-9. Run test scripts: "<b>python3 manage.py test</b>"
+8. Run the server: "<b>make start</b>"
+9. Automate the pipeline: "<b>make process</b>"
+10. Run test scripts: "<b>python3 manage.py test</b>"
 
 <b>* Bolded characters are to be entered in the terminal</b>
 
