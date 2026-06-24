@@ -1,14 +1,14 @@
 Ensure [pip3](https://pypi.org/project/pip/) and [python3](https://www.python.org) is installed.
 <br>
 1. Open the terminal
-3. Download the project folder from [github](https://github.com/tanghuien/opus-tuition) then unzip the downloaded folder
-4. Drag the unzipped folder to the terminal 
-5. Navigate to source code: "<b>cd src/opus_tuition</b>"
-6. Install virtual environment: "<b>python3 -m venv myvenv</b>"
-7. Activate virtual environment: "<b>source ./myvenv/bin/activate</b>"
-8. Install the packages: "<b>pip install -r requirements.txt</b>"
-9. Aautomate the pipeline: "<b>make process</b>"
-10. Run test scripts: "<b>python3 manage.py test</b>"
+2. Download the project folder from [github](https://github.com/tanghuien/opus-tuition) then unzip the downloaded folder
+3. Drag the unzipped folder to the terminal 
+4. Navigate to source code: "<b>cd src/opus_tuition</b>"
+5. Install virtual environment: "<b>python3 -m venv myvenv</b>"
+6. Activate virtual environment: "<b>source ./myvenv/bin/activate</b>"
+7. Install the packages: "<b>pip install -r requirements.txt</b>"
+8. Aautomate the pipeline: "<b>make process</b>"
+9. Run test scripts: "<b>python3 manage.py test</b>"
 
 <b>* Bolded characters are to be entered in the terminal</b>
 
