@@ -34,3 +34,5 @@ opus-tuition/
 ├── README.md                       ← Setup instructions, architecture overview, demo video
 ├── .gitignore                      ← Ignore and stop tracking files 
 └── .env.example                    ← Environment variable template         
+```
+Demo Video: [View video here](https://drive.google.com/file/d/1JMk1ExauPtl_HccVNgTzFftju_NbauAc/view?usp=share_link)
