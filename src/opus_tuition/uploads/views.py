@@ -109,12 +109,14 @@ def run_full_data_pipeline(upload, manual_path = None):
 
                     safe_payload = sanitize_for_json(cleaned_payload)
 
-                    if file_category == "ASSIGNMENT":                        
+                    if file_category == "ASSIGNMENT":                
+                        # Create new record or retrieve from existing record      
                         tutor, _ = Tutor.objects.get_or_create(tutor_name=safe_payload["Tutor Name"], tutor_email=safe_payload["Contact Email"])
                         student, _ = Student.objects.get_or_create(student_name=safe_payload["Student Name"])
                         level, _ = Level.objects.get_or_create(level_name=safe_payload["Level"])
                         subject, _ = Subject.objects.get_or_create(subject_name=safe_payload["Subject"])
                         
+                        # Create new record or update from existing record            
                         assignment, created = Assignment.objects.update_or_create(
                             assignment_id=safe_payload["Assignment ID"],
                             defaults={
@@ -148,7 +150,8 @@ def run_full_data_pipeline(upload, manual_path = None):
                                     "fees_charged": safe_payload["Fees Charged"],
                                     "assignment": assignment
                                 }
-                            )                        
+                            )
+                        # This is invoice file categoey                        
                         else: 
                             invoice, created = Invoice.objects.update_or_create(
                                 invoice_id=safe_payload["Invoice ID"],
@@ -162,6 +165,7 @@ def run_full_data_pipeline(upload, manual_path = None):
                                 }
                             ) 
                     
+                    # Create clean record
                     CleanRecord.objects.create(
                         upload=upload,
                         row_index=first_data_row_index,
@@ -184,7 +188,8 @@ def run_full_data_pipeline(upload, manual_path = None):
             except RowValidationCollectionError as rvce:
                 # Handle multiple non-critical errors found in one row
                 safe_payload = sanitize_for_json(row_dict)
-                            
+
+                # Loop through erros    
                 for error in rvce.errors:
                     QuarantineRecord.objects.create(
                         upload=upload,
@@ -379,7 +384,8 @@ class UploadReportAPIView(APIView):
                 "success": False,
                 "error": {
                     "code": "NOT_FOUND", 
-                    "message": f"Upload token sequence tracking index '{upload_id}' is invalid.", "timestamp": timezone.now().isoformat()}
+                    "message": f"Upload token sequence tracking index '{upload_id}' is invalid.", 
+                    "timestamp": timezone.now().isoformat()}
             }, status=status.HTTP_404_NOT_FOUND)
 
 class DeleteRecordAPIView(APIView):
@@ -419,16 +425,17 @@ class QuarantineResolveAPIView(APIView):
         except QuarantineRecord.DoesNotExist:
             # If it's not even in the database, log the error
             logger.error(f"Deletion failed: Record {row_id} does not exist in DB.")
-            return Response({"success": False, "error": "Record already removed"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"success": False, "error": "Record not found."}, status=status.HTTP_404_NOT_FOUND)
         
-        # If it exists, means is for delete purpose
+        # If it exists, means is already resolved, request cannot proceed.
         if record.is_resolved:
             logger.info(f"Record {row_id} found but already marked as resolved.")
-            return Response({"success": False, "error": "Record has already processed"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "error": "Record has already resolved."}, status=status.HTTP_400_BAD_REQUEST)
             
+        # Checks for missing payload
         corrected_payload = request.data.get("corrected_payload") 
         if not corrected_payload:
-            return Response({"success": False, "error": "Missing payload"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "error": "Missing payload."}, status=status.HTTP_400_BAD_REQUEST)
             
         criteria_map = {
             'INVOICE': {'pk': 'Invoice ID', 'secondary': ["Student Name", "Invoice Date", "Payment Status", "Payment Date"]},
@@ -500,13 +507,19 @@ class QuarantineResolveAPIView(APIView):
                     upload.quarantined_rows = F('quarantined_rows') - 1
                 upload.save()
 
-                # Clean up the errors: Delete the quarantine row
+                # Mark it as resolved
                 QuarantineRecord.objects.filter(
                     upload=upload, 
                     row_index=record.row_index
-                ).delete()
+                ).update(
+                    is_resolved=True,
+                    resolved_at=timezone.now()
+                )
             
-            return Response({"success": True, "message": "Successfully migrated to clean records."}, status=status.HTTP_200_OK)
+            return Response({
+                "success": True, 
+                "message": "Successfully migrated to clean records."
+            }, status=status.HTTP_200_OK)
             
         except RowValidationError as rve:
             return Response({
@@ -557,7 +570,11 @@ class SystemHealthAPIView(APIView):
         except Exception as e:
             return Response({
                 "success": False, 
-                "error": {"code": "DATABASE_DOWN", "message": "Database pipeline structural connections dropped.", "details": str(e)}
+                "error": {
+                    "code": "DATABASE_DOWN", 
+                    "message": "Database is down.", 
+                    "details": str(e)
+                }
             }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 def upload_page(request):

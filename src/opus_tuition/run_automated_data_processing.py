@@ -33,7 +33,7 @@ def validate_disk_file(file_path):
     file_size = os.path.getsize(file_path)
     if file_size > 10 * 1024 * 1024:
         logger.warning(f"File validation failed: File {file_path} too large ({file_size} bytes).")
-        return Response({"success": False, "error": {"code": "FILE_TOO_LARGE", "message": "File exceeds 10MB."}}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+        return Response({"success": False, "error": {"code": "FILE_TOO_LARGE", "message": "File size exceeds 10MB."}}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
    
     # Only accepts if the file extension is .xlsx or .xls. format
     allowed_extensions = (".xlsx", ".xls")

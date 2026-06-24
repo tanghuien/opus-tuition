@@ -107,7 +107,7 @@ def parse_and_round_decimal(val, places=4):
         
     except Exception:
         # If parsing fails, return None (or 0 if you prefer)
-        logger.exception("Parsing and rounding of ")
+        logger.exception(f"Parsing and rounding of {val}")
         return None
 
 def validate_and_clean_row_dict(row_dict, file_category, stored_id, stored_content, row_index):
@@ -503,6 +503,7 @@ def identify_and_map_columns(df, max_rows_to_check):
             matched_header = None
 
             for current_row_index, value in enumerate(column_sample):
+                # Strip whitespace and convert strings to lowercase for lookup consistency
                 clean_val = str(value).strip().lower() if pd.notna(value) else ""
 
                 if clean_val.startswith("log"):
@@ -604,13 +605,16 @@ def identify_and_map_columns(df, max_rows_to_check):
                             header_row_index = current_row_index
                         break
 
-            # Assign a fallback structural index label if unmatched
+            # Assign a fallback structural index label if unmatched that starts with "Column_"
             new_headers.append(matched_header if matched_header else f"Column_{col_index+1}")
 
+        # As there are two date fields, can be either invoice or payment in INVOICE
         if is_invoice:
+                # Make both of the two dates fields as "Date Candidates first"
                 date_cols = [i for i, h in enumerate(new_headers) if h == "Date Candidate"]
                 if len(date_cols) >= 2:
                     # Compare dates in the first available data row to determine identity
+                    # Invoice date should be earlier than payment date
                     d1 = pd.to_datetime(df.iloc[header_row_index, date_cols[0]])
                     d2 = pd.to_datetime(df.iloc[header_row_index, date_cols[1]])
                     if d1 < d2:
@@ -625,7 +629,7 @@ def identify_and_map_columns(df, max_rows_to_check):
             logger.error("Mapping failed: No headers could be identified.")
             raise ValueError("Mapping failed: No headers could be identified.")
 
-        # Assign new headers
+        # Assign new headers according
         df.columns = new_headers
 
         if is_invoice: 
