@@ -16,6 +16,10 @@ class RowValidationCollectionError(Exception):
     def __init__(self, errors):
         self.errors = errors
 
+    # Returns a list of all values for this key found in the collection
+    def get(self, key):
+        return [error.get(key) for error in self.errors if key in error]
+
 def sanitize_for_json(obj):
     """Recursively convert data to JSON-serializable formats."""
     if isinstance(obj, dict):

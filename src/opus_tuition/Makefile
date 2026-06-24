@@ -1,7 +1,5 @@
 # Define the command
 start:
-	@echo "--- Activate virtual environment ---"
-	source ./myvenv/bin/activate
 	@echo "--- Starting server ---"
 	python3 manage.py runserver
 
