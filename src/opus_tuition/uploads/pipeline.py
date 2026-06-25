@@ -375,36 +375,6 @@ def find_highlighted_header(file_path, max_scan_rows=30):
     except Exception as e:
         logger.exception(f"Unexpected error reading or processing the Excel file header: {e}")
         return None, 0, False
-
-def identify_file_category(data_path):
-    try:
-        # 1. ATTEMPT HEADER DISCOVERY
-        # Using existing find_highlighted_header logic
-        sheet_name, rows_to_skip, header_found = find_highlighted_header(data_path)
-
-        if header_found:
-            # Case A: Header found via highlighting
-            logger.info(f"Header discovered via highlighting (Sheet: {sheet_name}, Skip: {rows_to_skip})")
-            df = pd.read_excel(data_path, sheet_name=sheet_name, skiprows=rows_to_skip)
-        else:
-            # Case B: No header found, apply heuristic mapping to infer column structure
-            logger.warning(f"No header found in {data_path}; Falling back to heuristic column structure inference.")
-            df = pd.read_excel(data_path, sheet_name=sheet_name, header=None)
-        
-        max_rows_to_check = min(30, len(df))
-        df, inferred_category = identify_and_map_columns(df, max_rows_to_check)
-
-        if inferred_category == "UNKNOWN":
-            logger.error(f"Discovery failed: File category could not be inferred for {data_path}.")
-            raise ValueError("File category could not be identified.")
-
-        logger.info(f"Successfully identified file as: {inferred_category}")
-
-        return inferred_category
-
-    except Exception as e:
-        logger.error(f"Failed to process {data_path}: {e}", exc_info=True)
-        raise
     
 def is_valid_date(raw_val) -> bool:
     # Define the exact formats expected
