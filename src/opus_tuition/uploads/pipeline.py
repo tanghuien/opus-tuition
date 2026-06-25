@@ -16,15 +16,6 @@ from uploads.constants import *
 logger = logging.getLogger("pipeline.engine")
 
 def apply_row_standardisation(row):
-    # Force columns to be in strings
-    must_be_strings = ["Invoice ID", "Tutor ID", "Student Name", "Tutor Name", 
-                       "Log ID", "Assignment ID", "Subject", "Status"]
-
-    for col in must_be_strings:
-        val = row.get(col)
-        if val is not None:
-            row[col] = str(val).lower()
-
     # Payment Status
     payment_status = row.get("Payment Status")
     if isinstance(payment_status, str) and payment_status.lower().startswith("pend"):
@@ -36,8 +27,8 @@ def apply_row_standardisation(row):
         row["Subject"] = "Mathematics"
     
     # Attendance Status Standardisation
-    payment_status = row.get("Attendance Status")
-    if isinstance(payment_status, str) and payment_status.lower().endswith("mc"):
+    attendance_status = row.get("Attendance Status")
+    if isinstance(attendance_status, str) and attendance_status.lower().endswith("mc"):
         row["Attendance Status"] = "Absent-MC"
 
     return row
