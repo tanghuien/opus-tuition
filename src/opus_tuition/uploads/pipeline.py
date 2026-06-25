@@ -240,8 +240,7 @@ def validate_and_clean_row_dict(row_dict, file_category, stored_id, stored_conte
         if col in row and row[col] is not None:
             val = str(row[col]).strip().lower()
             
-            # 2. Extract allowed values (using the pre-computed set logic)
-            # Ensure these are also lowercase for the comparison
+            # Ensure these are lowercase for the comparison
             allowed_values = {str(item.value).lower() for item in enum_class}
             
             if val not in allowed_values:
@@ -290,8 +289,7 @@ def validate_and_clean_row_dict(row_dict, file_category, stored_id, stored_conte
             "message":f"Entry with identical details: {content_signature} already exists at row {original_row}."
         })
 
-    # 3. Store the entries ONLY after passing validation
-    # Use dictionary assignment, NOT .add()
+    # Store the entries ONLY after passing validation
     stored_id[id_signature] = row_index
     stored_content[content_signature] = row_index
         
