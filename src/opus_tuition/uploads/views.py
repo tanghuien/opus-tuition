@@ -49,15 +49,12 @@ def validate_uploaded_file(file_obj):
     
     return None
 
-def run_full_data_pipeline(upload, manual_path = None):
+def run_full_data_pipeline(upload):
     """
     This function ensures the data uploaded went through header algorithmn, data processing, and saving data into database.
     """
 
-
-    # Use the manual path that is provided from automated data processing 
-    # Else, use the file path uploaded on web
-    data_path = manual_path if manual_path else upload.raw_file.path
+    data_path = upload.raw_file.path
 
     try:
         # An attempt to find header
