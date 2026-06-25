@@ -159,6 +159,55 @@ Lists of all unresolved quarantined records.
 <br>
 Retrieves the full processing report for a specific upload.
 
+<span style="color:green">Success (200 OK)</span>: Returns the full processing report.
+```
+{
+    "success": true,
+    "report": {
+        "upload_id": "8b721e06-06fe-4b9d-b42e-723fcf169bb4",
+        "file": "/uploads/uploaded_files/2026/06/24/lesson_logs_messy_IwHW29c.xlsx",
+        "file_name": "lesson_logs_messy_IwHW29c.xlsx",
+        "file_category": "LESSON_LOG",
+        "upload_status": "QUARANTINED",
+        "metrics": {
+            "total_rows_received": 2,
+            "rows_accepted": 1,
+            "rows_quarantined": 1
+        },
+        "clean_records": [
+            {
+                "clean_record_id": "3e9e6dcf-cd77-4321-92bf-e81f45140ea6",
+                "data": {
+                    "Log ID": "LOG-001",
+                    "Assignment ID": "TAS-001",
+                    "Session Date": "2025-01-05",
+                    "Duration (Hours)": 1.5,
+                    "Attendance Status": "Present",
+                    "Session Notes": "Covered algebra ch.3",
+                    "Fees Charged": 82.5
+                }
+            }
+        ],
+        "quarantine_records": [
+            {
+                "quarantine_record_id": "dd83e03d-9953-417d-b97d-9d0c6332b194",
+                "row_index": 4,
+                "reason_code": "INVALID_VALUE",
+                "error_details": "Row 4 has an invalid non-numeric value in 'Fees Charged': 'TBC'.",
+                "raw_data": {
+                    "Log ID": "LOG-004",
+                    "Assignment ID": "TAS-004",
+                    "Session Date": "20/03/25",
+                    "Duration (Hours)": 1.5,
+                    "Attendance Status": "Absent",
+                    "Session Notes": "Student unwell — cancelled",
+                    "Fees Charged": "TBC"
+                }
+            }
+        ]
+    }
+}
+```
 <span style="color:red">Failure (404 NOT_FOUND)</span>: Upload does not exist in the database.
 ```json
 {
