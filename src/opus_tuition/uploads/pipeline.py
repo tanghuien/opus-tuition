@@ -26,11 +26,6 @@ def apply_row_standardisation(row):
     if isinstance(subject, str) and subject.lower().startswith("maths"):
         row["Subject"] = "Mathematics"
     
-    # Attendance Status Standardisation
-    attendance_status = row.get("Attendance Status")
-    if isinstance(attendance_status, str) and attendance_status.lower().endswith("mc"):
-        row["Attendance Status"] = "Absent-MC"
-
     return row
 
 def parse_single_date(raw_val):
@@ -116,12 +111,12 @@ def validate_and_clean_row_dict(row_dict, file_category, stored_id, stored_conte
     row = apply_row_standardisation(row)    
 
     # 4. Apply different case formatting
-    title_cols = ["Student Name", "Tutor Name", "Level", "Payment Status", "Attendance Status", "Subject", "Status"]
+    title_cols = ["Student Name", "Tutor Name", "Level", "Subject"]
     for col in title_cols:
         if col in row and isinstance(row[col], str):
             row[col] = row[col].title()
 
-    capitalize_cols = ["Payment Status", "Subject", "Status"]
+    capitalize_cols = ["Payment Status", "Attendance Status", "Status"]
     for col in capitalize_cols:
         if col in row and isinstance(row[col], str):
             row[col] = row[col].capitalize()
